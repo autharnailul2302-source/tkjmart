@@ -501,12 +501,31 @@ p{line-height:1.55;color:var(--text-dim);margin:0 0 10px;}
 .qg-timer.done .qg-track i{opacity:.35;}
 @media (prefers-reduced-motion: reduce){.qg-pop{animation:none;opacity:1;}}
 .gd-weak{margin:10px 0 14px;padding:12px 14px;border:1px solid rgba(255,255,255,.16);border-radius:12px;background:rgba(255,255,255,.04);}
-.gd-weak h3{margin:0 0 8px;font-size:14px;}
+.gd-weak h3{margin:0;font-size:14px;display:inline;}
+.gd-weak summary{cursor:pointer;margin-bottom:8px;}
+#guru-dash-stats{grid-template-columns:repeat(5,1fr);}
+@media (max-width:820px){#guru-dash-stats{grid-template-columns:1fr 1fr;}}
 .gd-weak-row{display:grid;grid-template-columns:minmax(0,1fr) 110px 48px;gap:10px;align-items:center;font-size:13px;margin:5px 0;}
 .gd-weak-row .bar{height:7px;border-radius:5px;background:rgba(255,255,255,.12);overflow:hidden;}
 .gd-weak-row .bar i{display:block;height:100%;background:#ff7a6b;}
 .gd-note{font-size:12px;color:var(--text-dim);margin-top:6px;}
 .gd-pm{font-weight:700;white-space:nowrap;}
+#screen-guru-dashboard .gd-card{max-width:1180px;}
+.gd-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin:12px 0 8px;padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);}
+.gd-tools .gd-f{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--text-dim);min-width:0;}
+.gd-tools input,.gd-tools select{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#fff;font-family:var(--sans);font-size:13px;max-width:100%;}
+.gd-tools input:focus,.gd-tools select:focus{outline:2px solid var(--copper-bright);border-color:transparent;}
+.gd-tools .gd-q{flex:1 1 200px;}
+.gd-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin:8px 0;font-size:13px;color:var(--text-dim);}
+.gd-bar .gd-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.gd-bar .btn{padding:7px 14px;font-size:12px;margin:0;}
+.gd-bar .btn[disabled]{opacity:.4;cursor:not-allowed;}
+.gd-sel{accent-color:var(--copper-bright);width:16px;height:16px;cursor:pointer;}
+table.data-table tr.gd-picked td{background:rgba(255,183,3,.12);}
+.gd-pager{display:flex;justify-content:center;align-items:center;gap:12px;margin:12px 0 4px;}
+.gd-pager:empty{display:none;}
+.gd-sub{font-size:11px;color:var(--text-dim);}
+
 .gd-pm.hi{color:var(--circuit-bright);} .gd-pm.mid{color:#ffd166;} .gd-pm.lo{color:#ff9d94;}
 .lb-pod-xp,.lb-xp{font-family:var(--mono);font-size:11.5px;color:var(--text-dim);}
 .lb-pod-xp b,.lb-xp b{color:#ffd166;font-weight:700;}
@@ -2604,21 +2623,39 @@ table.data-table td.hi{color:var(--text);font-weight:700;}
     <span class="who">Guru: <b id="guru-dash-nama">-</b> &middot; <span id="guru-dash-sekolah">-</span></span>
     <button class="btn ghost" style="padding:6px 14px;font-size:12px;" onclick="logoutGuru()">Keluar</button>
   </div>
-  <div class="card">
+  <div class="card gd-card">
     <h2>Rekap Siswa &mdash; Sekolah Saya</h2>
     <p>Menampilkan hasil siswa dari sekolah yang sama dengan akun guru ini, berdasarkan data yang dikirim otomatis dari gim.</p>
     <div class="report-grid" id="guru-dash-stats"></div>
-    <div class="gd-weak" id="guru-dash-weak" style="display:none;"></div>
     <div class="form-msg" id="guru-dash-msg"></div>
+    <div class="gd-tools" id="gd-tools" style="display:none;">
+      <label class="gd-f gd-q">Cari siswa<input type="search" id="gd-q" placeholder="&#128269; Nama siswa..." autocomplete="off" oninput="guruFilterChange_()"></label>
+      <label class="gd-f">Kelas<select id="gd-kelas" onchange="guruFilterChange_()"><option value="">Semua kelas</option></select></label>
+      <label class="gd-f">Tahap<select id="gd-tahap" onchange="guruFilterChange_()"><option value="">Semua tahap</option></select></label>
+      <label class="gd-f">Tanggal dari<input type="date" id="gd-from" onchange="guruFilterChange_()"></label>
+      <label class="gd-f">sampai<input type="date" id="gd-to" onchange="guruFilterChange_()"></label>
+      <button type="button" class="btn ghost" style="padding:8px 14px;font-size:12px;margin:0;" onclick="guruResetFilter_()">&#8634; Reset</button>
+    </div>
+    <div class="gd-bar" id="gd-bar" style="display:none;">
+      <span id="gd-info"></span>
+      <span class="gd-acts">
+        <button type="button" class="btn ghost" id="gd-selall" onclick="guruSelectAll_()">Pilih semua hasil filter</button>
+        <button type="button" class="btn ghost" id="gd-export" onclick="guruExport_()">&#128229; Ekspor CSV (Excel)</button>
+        <button type="button" class="btn danger" id="gd-del" onclick="guruDeleteSelected_()" disabled>&#128465; Hapus terpilih (0)</button>
+      </span>
+    </div>
     <div class="data-table-wrap">
       <table class="data-table" id="guru-dash-table" style="display:none;">
         <thead><tr>
-          <th>Nama</th><th>Kelas</th><th>Tier</th><th>Skor Sertifikasi</th><th>Reputasi</th><th>Omzet Cabang</th><th>Predikat</th><th>Tahap</th><th>Tiket Hardware</th><th>XP</th><th>Bintang</th><th>Pemahaman</th><th>K3 benar 1x</th><th>Komponen benar 1x</th><th>Rata2 waktu</th>
+          <th><input type="checkbox" class="gd-sel" id="gd-selpage" onchange="guruTogglePage_(this.checked)" aria-label="Pilih semua di halaman ini"></th><th>Nama</th><th>Kelas</th><th>Tanggal</th><th>Tier</th><th>Skor Sertifikasi</th><th>Reputasi</th><th>Omzet Cabang</th><th>Predikat</th><th>Tahap</th><th>Tiket Hardware</th><th>XP</th><th>Bintang</th><th>Pemahaman</th><th>K3 benar 1x</th><th>Komponen benar 1x</th><th>Rata2 waktu</th>
         </tr></thead>
         <tbody id="guru-dash-tbody"></tbody>
       </table>
       <div class="empty-state" id="guru-dash-empty">Memuat data...</div>
     </div>
+    <div class="gd-pager" id="gd-pager"></div>
+    <div class="gd-weak" id="guru-dash-weak" style="display:none;"></div>
+    <div class="gd-sub" id="gd-sub" style="display:none;">Tanggal = terakhir data siswa masuk/diperbarui. Hapus bersifat permanen di Google Sheet; siswa yang main lagi akan masuk lagi sebagai data baru.</div>
   </div>
   <button class="btn" onclick="showScreen('screen-menu')">Kembali ke Menu</button>
 </div>
@@ -4088,12 +4125,12 @@ function renderGuruWeak_(rows){
   const top=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0,4);
   const lo=withData.filter(r=>guruPct_(r)<50).length;
   const avg=Math.round(withData.reduce((a,r)=>a+guruPct_(r),0)/withData.length);
-  box.innerHTML='<h3>Pemahaman kelas: rata-rata '+avg+'% benar di percobaan pertama'+(lo?' \u00B7 '+lo+' siswa perlu bimbingan':'')+'</h3>'+
+  box.innerHTML='<details open><summary><h3>Pemahaman kelas: rata-rata '+avg+'% benar di percobaan pertama'+(lo?' \u00B7 '+lo+' siswa perlu bimbingan':'')+'</h3></summary>'+
     (top.length
       ? top.map(c=>{ const pc=Math.round(cnt[c]/withData.length*100);
           return '<div class="gd-weak-row"><span>'+escapeHtml_(guruTopicName_(c))+'</span><span class="bar"><i style="width:'+pc+'%"></i></span><span>'+cnt[c]+'/'+withData.length+'</span></div>'; }).join('')
       : '<div class="gd-note">Tidak ada topik yang salah. Semua siswa menjawab benar di percobaan pertama.</div>')+
-    '<div class="gd-note">Topik di atas = materi yang paling banyak dijawab salah saat percobaan pertama. Cocok untuk dibahas ulang di kelas. Data hanya dari siswa yang sudah menyelesaikan kuis di versi gim ini.</div>';
+    '<div class="gd-note">Topik di atas = materi yang paling banyak dijawab salah saat percobaan pertama. Cocok untuk dibahas ulang di kelas. Data hanya dari siswa yang sudah menyelesaikan kuis di versi gim ini.</div></details>';
   box.style.display='block';
 }
 async function loadGuruDashboard(){
@@ -4116,29 +4153,155 @@ async function loadGuruDashboard(){
     }
     return;
   }
-  const rows = res.data || [];
-  const total = rows.length;
+  guruRows_ = res.data || [];
+  guruSel_ = new Set(); guruPage_ = 0;
+  guruBuildFilters_();
+  renderGuru_();
+}
+/* ---- Dashboard Guru: filter, paging, ekspor, hapus ---- */
+let guruRows_ = [], guruView_ = [], guruSel_ = new Set(), guruPage_ = 0;
+const GURU_PS = 15;
+function guruKey_(r){ return r.RowKey || ''; }
+function guruDate_(r){ const d = new Date(r.Timestamp); return isNaN(d) ? null : d; }
+function guruDateStr_(r){ const d = guruDate_(r); return d ? d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}) : '\u2014'; }
+function guruKelasKey_(v){ return String(v==null?'':v).trim().replace(/\s+/g,' ').toLowerCase(); }
+function guruBuildFilters_(){
+  const kelas = {}, tahap = {};
+  guruRows_.forEach(r=>{
+    const k = guruKelasKey_(r.Kelas); if(k && !kelas[k]) kelas[k] = String(r.Kelas).trim().replace(/\s+/g,' ');
+    const t = String(r.Tahap||'').trim(); if(t) tahap[t] = t;
+  });
+  const fill = (id, map, all)=>{ const el = document.getElementById(id); el.innerHTML = '<option value="">'+all+'</option>' +
+    Object.keys(map).sort((a,b)=>map[a].localeCompare(map[b],'id',{numeric:true})).map(k=>'<option value="'+escapeHtml_(k)+'">'+escapeHtml_(map[k])+'</option>').join(''); };
+  fill('gd-kelas', kelas, 'Semua kelas'); fill('gd-tahap', tahap, 'Semua tahap');
+  document.getElementById('gd-q').value=''; document.getElementById('gd-from').value=''; document.getElementById('gd-to').value='';
+}
+function guruApplyFilter_(){
+  const q = document.getElementById('gd-q').value.trim().toLowerCase();
+  const kelas = document.getElementById('gd-kelas').value, tahap = document.getElementById('gd-tahap').value;
+  const from = document.getElementById('gd-from').value, to = document.getElementById('gd-to').value;
+  const d0 = from ? new Date(from+'T00:00:00') : null, d1 = to ? new Date(to+'T23:59:59.999') : null;
+  guruView_ = guruRows_.filter(r=>{
+    if(q && String(r.Nama||'').toLowerCase().indexOf(q)<0) return false;
+    if(kelas && guruKelasKey_(r.Kelas)!==kelas) return false;
+    if(tahap && String(r.Tahap||'').trim()!==tahap) return false;
+    if(d0 || d1){ const d = guruDate_(r); if(!d) return false; if(d0 && d<d0) return false; if(d1 && d>d1) return false; }
+    return true;
+  }).sort((a,b)=>String(a.Nama||'').localeCompare(String(b.Nama||''),'id'));
+}
+function guruFilterChange_(){ guruSel_ = new Set(); guruPage_ = 0; renderGuru_(); }
+function guruResetFilter_(){ ['gd-q','gd-kelas','gd-tahap','gd-from','gd-to'].forEach(id=>{ document.getElementById(id).value=''; }); guruFilterChange_(); }
+function guruHw_(r){ return (r.TiketHardware===true||r.TiketHardware==='TRUE'||r.TiketHardware==='LULUS'); }
+function renderGuru_(){
+  guruApplyFilter_();
+  const rows = guruView_, total = rows.length;
+  const tbl = document.getElementById('guru-dash-table'), tbody = document.getElementById('guru-dash-tbody'), empty = document.getElementById('guru-dash-empty');
   const avgCert = total? Math.round(rows.reduce((a,r)=>a+(Number(r.SkorSertifikasi)||0),0)/total) : 0;
   const avgRep = total? Math.round(rows.reduce((a,r)=>a+(Number(r.RepScore)||0),0)/total) : 0;
-  const selesai = rows.filter(r=>r.Tahap==='selesai').length;
-  const boleHw = rows.filter(r=>r.TiketHardware===true||r.TiketHardware==='TRUE'||r.TiketHardware==='LULUS').length;
+  const selesai = rows.filter(r=>r.Tahap==='selesai').length, boleHw = rows.filter(guruHw_).length;
   document.getElementById('guru-dash-stats').innerHTML =
-    '<div class="report-item"><div class="val">'+total+'</div><div class="lbl">Total Peserta</div></div>'+
+    '<div class="report-item"><div class="val">'+total+'</div><div class="lbl">Total Peserta'+(total!==guruRows_.length?' (hasil filter)':'')+'</div></div>'+
     '<div class="report-item"><div class="val">'+avgCert+'</div><div class="lbl">Rata2 Skor Sertifikasi</div></div>'+
     '<div class="report-item"><div class="val">'+avgRep+'</div><div class="lbl">Rata2 Reputasi</div></div>'+
     '<div class="report-item"><div class="val">'+selesai+'</div><div class="lbl">Selesai Cerita</div></div>'+
     '<div class="report-item"><div class="val">'+boleHw+'</div><div class="lbl">Boleh Praktik Hardware</div></div>';
-  if(total===0){ empty.textContent = 'Belum ada siswa dari sekolah ini yang mengirim data.'; return; }
-  tbody.innerHTML = rows.map(r=>{
-    const hw = (r.TiketHardware===true||r.TiketHardware==='TRUE'||r.TiketHardware==='LULUS');
-    return '<tr><td class="hi">'+escapeHtml_(r.Nama)+'</td><td>'+escapeHtml_(r.Kelas)+'</td><td>'+escapeHtml_(r.Tier)+'</td>'+
-    '<td>'+(r.SkorSertifikasi||0)+'</td><td>'+(r.RepScore||0)+'</td><td>'+rupiah(Number(r.Omzet)||0)+'</td>'+
-    '<td>'+escapeHtml_(r.PredikatAkhir||'-')+'</td><td>'+escapeHtml_(r.Tahap||'-')+'</td>'+
-    '<td>'+(hw?'✅ Boleh Praktik':'—')+'</td>'+
-    '<td>'+(Number(r.XP)||0)+'</td><td>'+(Number(r.BintangTerbaik)?('★'.repeat(Number(r.BintangTerbaik))):'—')+'</td>'+guruQuizCells_(r)+'</tr>';
-  }).join('');
   renderGuruWeak_(rows);
-  tbl.style.display='table'; empty.style.display='none';
+  const hasAny = guruRows_.length>0;
+  document.getElementById('gd-tools').style.display = hasAny?'flex':'none';
+  document.getElementById('gd-bar').style.display = hasAny?'flex':'none';
+  document.getElementById('gd-sub').style.display = hasAny?'block':'none';
+  if(!hasAny){ tbl.style.display='none'; empty.style.display='block'; empty.textContent='Belum ada siswa dari sekolah ini yang mengirim data.'; document.getElementById('gd-pager').innerHTML=''; return; }
+  const pages = Math.max(1, Math.ceil(total/GURU_PS));
+  guruPage_ = Math.min(guruPage_, pages-1);
+  const slice = rows.slice(guruPage_*GURU_PS, guruPage_*GURU_PS+GURU_PS);
+  if(!total){ tbl.style.display='none'; empty.style.display='block'; empty.textContent='Tidak ada siswa yang cocok dengan filter.'; }
+  else{
+    tbody.innerHTML = slice.map(r=>{
+      const key = guruKey_(r), picked = guruSel_.has(key);
+      return '<tr class="'+(picked?'gd-picked':'')+'"><td><input type="checkbox" class="gd-sel" '+(key?'':'disabled ')+(picked?'checked ':'')+'data-k="'+escapeHtml_(key)+'" onchange="guruToggle_(this)" aria-label="Pilih '+escapeHtml_(r.Nama)+'"></td>'+
+      '<td class="hi">'+escapeHtml_(r.Nama)+'</td><td>'+escapeHtml_(r.Kelas)+'</td><td>'+guruDateStr_(r)+'</td><td>'+escapeHtml_(r.Tier)+'</td>'+
+      '<td>'+(r.SkorSertifikasi||0)+'</td><td>'+(r.RepScore||0)+'</td><td>'+rupiah(Number(r.Omzet)||0)+'</td>'+
+      '<td>'+escapeHtml_(r.PredikatAkhir||'-')+'</td><td>'+escapeHtml_(r.Tahap||'-')+'</td>'+
+      '<td>'+(guruHw_(r)?'\u2705 Boleh Praktik':'\u2014')+'</td>'+
+      '<td>'+(Number(r.XP)||0)+'</td><td>'+(Number(r.BintangTerbaik)?('\u2605'.repeat(Number(r.BintangTerbaik))):'\u2014')+'</td>'+guruQuizCells_(r)+'</tr>';
+    }).join('');
+    tbl.style.display='table'; empty.style.display='none';
+  }
+  document.getElementById('gd-pager').innerHTML = pages>1
+    ? '<button type="button" class="lb-pg-btn" onclick="guruGo_(-1)"'+(guruPage_===0?' disabled':'')+'>&#8592; Sebelumnya</button><span class="lb-pg-info">Hal. '+(guruPage_+1)+' / '+pages+'</span><button type="button" class="lb-pg-btn" onclick="guruGo_(1)"'+(guruPage_>=pages-1?' disabled':'')+'>Selanjutnya &#8594;</button>' : '';
+  guruUpdateBar_(slice);
+}
+function guruUpdateBar_(slice){
+  slice = slice || guruView_.slice(guruPage_*GURU_PS, guruPage_*GURU_PS+GURU_PS);
+  const total = guruView_.length, n = guruSel_.size;
+  const from = total? guruPage_*GURU_PS+1 : 0, to = Math.min(total, (guruPage_+1)*GURU_PS);
+  document.getElementById('gd-info').textContent = 'Menampilkan '+from+'\u2013'+to+' dari '+total+' siswa'+(total!==guruRows_.length?' (total '+guruRows_.length+')':'');
+  const del = document.getElementById('gd-del'); del.disabled = !n; del.innerHTML = '&#128465; Hapus terpilih ('+n+')';
+  const keys = slice.map(guruKey_).filter(Boolean);
+  const cb = document.getElementById('gd-selpage'); if(cb) cb.checked = keys.length>0 && keys.every(k=>guruSel_.has(k));
+  const all = guruView_.map(guruKey_).filter(Boolean);
+  const sa = document.getElementById('gd-selall');
+  sa.textContent = (all.length && all.every(k=>guruSel_.has(k))) ? 'Batal pilih semua' : 'Pilih semua hasil filter ('+all.length+')';
+  document.getElementById('gd-export').disabled = !total;
+  sa.disabled = !all.length;
+}
+function guruGo_(d){ guruPage_ = Math.max(0, guruPage_+d); renderGuru_(); const w=document.getElementById('gd-tools'); try{ w.scrollIntoView({block:'start',behavior:'smooth'}); }catch(e){} }
+function guruToggle_(el){
+  const k = el.dataset.k; if(!k) return;
+  if(el.checked) guruSel_.add(k); else guruSel_.delete(k);
+  const tr = el.closest('tr'); if(tr) tr.classList.toggle('gd-picked', el.checked);
+  guruUpdateBar_();
+}
+function guruTogglePage_(on){
+  guruView_.slice(guruPage_*GURU_PS, guruPage_*GURU_PS+GURU_PS).forEach(r=>{ const k=guruKey_(r); if(!k) return; if(on) guruSel_.add(k); else guruSel_.delete(k); });
+  renderGuru_();
+}
+function guruSelectAll_(){
+  const all = guruView_.map(guruKey_).filter(Boolean);
+  const everySel = all.length && all.every(k=>guruSel_.has(k));
+  all.forEach(k=>{ if(everySel) guruSel_.delete(k); else guruSel_.add(k); });
+  renderGuru_();
+}
+function guruCsvCell_(v){
+  let t = String(v==null?'':v);
+  if(/^[=+\-@]/.test(t)) t = "'" + t;
+  return /[;"\n\r]/.test(t) ? '"'+t.replace(/"/g,'""')+'"' : t;
+}
+function guruExport_(){
+  if(!guruView_.length) return;
+  const head = ['Nama','Kelas','Sekolah','Tanggal','Tier','Skor Sertifikasi','Reputasi','Omzet Cabang','Predikat','Tahap','Boleh Praktik Hardware','XP','Bintang','Pemahaman (%)','K3 benar 1x','Komponen benar 1x','Rata2 waktu jawab (dtk)','Topik sulit'];
+  const lines = [head.map(guruCsvCell_).join(';')];
+  guruView_.forEach(r=>{
+    const p = guruPct_(r), d = guruDate_(r);
+    const k3 = Number(r.K3Soal)||0, id = Number(r.IdSoal)||0;
+    lines.push([r.Nama, r.Kelas, r.Sekolah, d? d.toISOString().slice(0,10) : '', r.Tier, Number(r.SkorSertifikasi)||0, Number(r.RepScore)||0, Number(r.Omzet)||0,
+      r.PredikatAkhir||'', r.Tahap||'', guruHw_(r)?'Ya':'Tidak', Number(r.XP)||0, Number(r.BintangTerbaik)||0, p===null?'':p,
+      k3?(Number(r.K3BenarPertama)||0)+'/'+k3:'', id?(Number(r.IdBenarPertama)||0)+'/'+id:'', Number(r.RataDetikJawab)||'',
+      String(r.SoalSulit||'').split(',').filter(Boolean).map(guruTopicName_).join(' | ')].map(guruCsvCell_).join(';'));
+  });
+  const blob = new Blob(['\uFEFF'+lines.join('\r\n')], {type:'text/csv;charset=utf-8'});
+  const sek = String((getGuruSession()||{}).sekolah||'sekolah').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').toLowerCase();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'rekap-'+sek+'-'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  setMsg_('guru-dash-msg','Mengekspor '+guruView_.length+' siswa. File CSV bisa dibuka di Excel atau Google Sheets.','ok');
+}
+async function guruDeleteSelected_(){
+  const keys = Array.from(guruSel_); if(!keys.length) return;
+  const session = getGuruSession(); if(!session || !session.token){ requireGuruLogin_(); return; }
+  const names = guruRows_.filter(r=>guruSel_.has(guruKey_(r))).map(r=>r.Nama).slice(0,5).join(', ');
+  if(!confirm('Hapus PERMANEN data '+keys.length+' siswa'+(names?' ('+names+(keys.length>5?', dst.':'')+')':'')+'?\n\nData di Google Sheet akan dihapus dan tidak bisa dikembalikan.\nSebaiknya ekspor CSV dulu sebagai cadangan.')) return;
+  const btn = document.getElementById('gd-del'); btn.disabled = true; btn.textContent = 'Menghapus...';
+  setMsg_('guru-dash-msg','','');
+  const res = await apiPost_('hapusSiswa', {sessionToken:session.token, keys}, 120000);
+  if(res && res.ok){
+    await loadGuruDashboard();
+    setMsg_('guru-dash-msg', res.deleted+' siswa dihapus.', 'ok');
+  }else{
+    const m = {'session-invalid':'Sesi login berakhir, silakan login ulang.','unknown-action':'Server belum diperbarui. Pasang Code.gs terbaru lalu deploy versi baru.'};
+    setMsg_('guru-dash-msg', m[res && res.error] || 'Gagal menghapus. Coba lagi.', 'err');
+    guruUpdateBar_();
+  }
 }
 
 /* ---------------- LOGIN ADMIN ---------------- */

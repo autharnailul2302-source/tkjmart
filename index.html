@@ -3827,10 +3827,27 @@ function syncLbSeg_(){
 function setLbScope_(sc){ lbScope_ = sc; lbPage_ = 0; syncLbSeg_(); if(lbRows_.length || !lbLoading_) renderLeaderboard_(); }
 function lbScore_(r){ return Math.round(((Number(r.SkorSertifikasi)||0)+(Number(r.RepScore)||0))/2); }
 function lbStars_(r){ const n=Math.max(0,Math.min(3,Number(r.BintangTerbaik)||0)); return n?('\u2605'.repeat(n)+' '):''; }
+/* Kunci sekolah: SMKN 1 / SMK N 1 / smk negeri no.1 / huruf besar-kecil / spasi ganda dianggap SAMA */
+function schoolKey_(v){
+  let t=String(v==null?'':v).toLowerCase().replace(/[.,()'"`’\/_-]+/g,' ').replace(/\s+/g,' ').trim();
+  t=t.replace(/\b(sm[kapt]|smt?i|mt?s|mas?)n(?=\d|\s|$)/g,function(m,a){return a+' negeri';});
+  t=t.replace(/\b(sm[kap]|mt?s|ma)\s*n\s+(?=\d)/g,function(m,a){return a+' negeri ';});
+  t=t.replace(/\b(neg|negri|ngri|nageri)\b/g,'negeri').replace(/\b(swasta|swt)\b/g,'swasta');
+  t=t.replace(/\b(sm[kap])(?=\d)/g,'$1 ');
+  t=t.replace(/\b(negeri|swasta)\s*(?:no|nomor|nmr)?\s*(\d)/g,'$1 $2');
+  t=t.replace(/\b(no|nomor|nmr)\s*(?=\d)/g,'');
+  t=t.replace(/(\d)(?=[a-z])/g,'$1 ').replace(/\s+/g,' ').trim();
+  return t;
+}
+function canonSekolah_(v){
+  const k=schoolKey_(v); if(!k) return '';
+  try{ if(typeof SEKOLAH_LIST!=='undefined'){ for(const n of SEKOLAH_LIST){ if(schoolKey_(n)===k) return n; } } }catch(e){}
+  return k.toUpperCase();
+}
 function lbNorm_(v){ return String(v==null?'':v).trim().toLowerCase(); }
 function lbInitials_(n){ const p=String(n||'?').trim().split(/\s+/); return ((p[0]||'?').charAt(0)+(p[1]?p[1].charAt(0):'')).toUpperCase(); }
 function lbTierCls_(t){ t=String(t||'').toUpperCase(); return t==='UTAMA'?'t-utama':(t==='MADYA'?'t-madya':'t-junior'); }
-function lbIsMe_(r){ return !!(S && S.playerName && lbNorm_(r.Nama)===lbNorm_(S.playerName) && lbNorm_(r.Sekolah)===lbNorm_(S.sekolah)); }
+function lbIsMe_(r){ return !!(S && S.playerName && lbNorm_(r.Nama)===lbNorm_(S.playerName) && schoolKey_(r.Sekolah)===schoolKey_(S.sekolah)); }
 function lbShowEmpty_(ico, title, text, retry, extraHtml){
   const el = document.getElementById('lb-empty');
   el.innerHTML = '<div class="lb-empty-ico">'+ico+'</div><h3>'+escapeHtml_(title)+'</h3><p>'+escapeHtml_(text)+'</p>'+
@@ -3912,9 +3929,9 @@ async function loadLeaderboard(){
 }
 function renderLeaderboard_(){
   lbClear_();
-  const mySekolah = lbNorm_(S && S.sekolah);
+  const mySekolah = schoolKey_(S && S.sekolah);
   const all = lbRows_;
-  const rows = lbScope_==='sek' ? all.filter(r=>lbNorm_(r.Sekolah)===mySekolah) : all;
+  const rows = lbScope_==='sek' ? all.filter(r=>schoolKey_(r.Sekolah)===mySekolah) : all;
 
   // Kartu "posisimu" (selalu dihitung dari peringkat nasional)
   const meEl = document.getElementById('lb-me');
@@ -3995,7 +4012,7 @@ function lbLoc_(r){ return [r.Kota, r.Provinsi].filter(v=>v && v!=='-').join(', 
 /* ---------------- DAFTAR & LOGIN GURU ---------------- */
 async function doGuruDaftar(){
   const nama = document.getElementById('guru-daftar-nama').value.trim();
-  const sekolah = document.getElementById('guru-daftar-sekolah').value.trim();
+  const sekolah = canonSekolah_(document.getElementById('guru-daftar-sekolah').value);
   const email = document.getElementById('guru-daftar-email').value.trim().toLowerCase();
   const pass = document.getElementById('guru-daftar-pass').value;
   const pass2 = document.getElementById('guru-daftar-pass2').value;
@@ -4294,7 +4311,7 @@ function adRenderActiveFilter_(){
   const el = document.getElementById('admin-active-filter'); if(!el) return;
   const chips = [];
   if(adminSiswaSchool_){
-    const nm = (adSchools_().find(x=>adNorm_(x.nama)===adminSiswaSchool_)||{}).nama || adminSiswaSchool_;
+    const nm = (adSchools_().find(x=>schoolKey_(x.nama)===adminSiswaSchool_)||{}).nama || adminSiswaSchool_;
     chips.push('<span class="ad-fchip">&#127979; '+escapeHtml_(nm)+'<button type="button" onclick="adminClearSchool_()" aria-label="Hapus filter sekolah">&times;</button></span>');
   }
   if(adminSiswaHw_) chips.push('<span class="ad-fchip">&#128295; Boleh praktik hardware<button type="button" onclick="adminToggleHw_()" aria-label="Hapus filter hardware">&times;</button></span>');
@@ -4308,7 +4325,7 @@ function adSchools_(){
   const map = {};
   adminData_.siswa.forEach(r=>{
     const nm = String(r.Sekolah||'').trim(); if(!nm) return;
-    const k = adNorm_(nm);
+    const k = schoolKey_(nm);
     const o = map[k] || (map[k] = {nama:nm, kota:'', n:0, cert:0, rep:0, hw:0});
     o.n++; o.cert += Number(r.SkorSertifikasi)||0; o.rep += Number(r.RepScore)||0; if(adHwOk_(r)) o.hw++;
     if(!o.kota && r.Kota && r.Kota!=='-') o.kota = r.Kota;
@@ -4345,7 +4362,7 @@ function adSuggestPick_(kind, val){
   const inp = document.getElementById('admin-siswa-search');
   inp.value = val; adSuggestHide_();
   adminSiswaPage_ = 0;
-  if(kind==='school'){ adminSiswaSchool_ = adNorm_(val); adminSiswaQuery_ = ''; }
+  if(kind==='school'){ adminSiswaSchool_ = schoolKey_(val); adminSiswaQuery_ = ''; }
   else { adminSiswaSchool_ = ''; adminSiswaQuery_ = adNorm_(val); }
   renderAdminSiswa_();
 }
@@ -4386,7 +4403,7 @@ function renderAdminSiswa_(){
   const q = adminSiswaQuery_;
   const sch = adminSiswaSchool_;
   const rows = rows0.filter(r=> !adminSiswaHw_ || hwOk(r))
-    .filter(r=> sch ? adNorm_(r.Sekolah)===sch : (!q || [r.Nama,r.Sekolah,r.Kota,r.Provinsi].some(v=>String(v||'').toLowerCase().indexOf(q)>=0)))
+    .filter(r=> sch ? schoolKey_(r.Sekolah)===sch : (!q || [r.Nama,r.Sekolah,r.Kota,r.Provinsi].some(v=>String(v||'').toLowerCase().indexOf(q)>=0)))
     .sort((a,b)=>adSiswaScore_(b)-adSiswaScore_(a));
   const list = document.getElementById('admin-siswa-list'), empty = document.getElementById('admin-siswa-empty'), head = document.getElementById('admin-siswa-head');
   if(rows.length===0){
@@ -5308,6 +5325,7 @@ function setRegErr_(inputId, msg){
   box.classList.toggle('invalid', !!msg);
   const e = box.querySelector('.fld-err'); if(e) e.textContent = msg || '';
 }
+['player-sekolah-field','guru-daftar-sekolah'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change',()=>{ const c=canonSekolah_(el.value); if(c) el.value=c; }); });
 function clearRegErrors_(){ ['player-name-field','player-kelas-field','player-sekolah-field'].forEach(id=>setRegErr_(id,'')); }
 ['player-name-field','player-kelas-field','player-sekolah-field'].forEach(id=>{
   const el = document.getElementById(id);
@@ -5316,7 +5334,7 @@ function clearRegErrors_(){ ['player-name-field','player-kelas-field','player-se
 function confirmPlayerName(){
   const v = document.getElementById('player-name-field').value.trim();
   const kelas = document.getElementById('player-kelas-field').value.trim();
-  const sekolah = document.getElementById('player-sekolah-field').value.trim();
+  const sekolah = canonSekolah_(document.getElementById('player-sekolah-field').value);
   // Validasi: nama, kelas, dan asal sekolah wajib (dipakai papan peringkat & rekap guru)
   clearRegErrors_();
   let firstBad = null;
@@ -7538,7 +7556,7 @@ const DD_VOICE_={
     wrong:["Kurang sesuai dengan kebutuhan Bapak, Nak.","Coba diperiksa lagi ya, Nak."],
     leave:["Terlalu lama, Bapak permisi dulu ya.","Maaf Nak, Bapak tidak bisa menunggu."]},
   p03:{ /* kreatif, ekspresif */
-    build:["Hai hai! PC buat {p} dong, budget {b}. Biar kerja kreatifku lancar!","Halo! Aku butuh PC buat {p}. Budget sekitar {b}, ya!"],
+    build:["Hai hai! PC buat {p} dong, budget {b}. Bisa dibantu ya!","Halo! Aku butuh PC buat {p}. Budget sekitar {b}, ya!"],
     fix:["Duh, PC-ku error pas lagi garap proyek: {s}.","Tolong! PC-ku begini: {s}. Deadline-ku nih!"],
     happy:["Keren! Proyekku bisa lanjut, makasih!","Mantap, bikin semangat berkarya lagi!"],
     wrong:["Hmm, bukan ini yang kubayangin...","Kurang cocok sama konsepku nih."],
@@ -7550,22 +7568,22 @@ const DD_VOICE_={
     wrong:["Hmm, kayaknya bukan deh...","Eh, salah itu. Coba lagi dong."],
     leave:["Lama amat, cabut deh.","Yaudah, nggak jadi."]},
   p05:{ /* gamer, heboh */
-    build:["Yo! Butuh PC buat {p}. Budget {b}, harus ngebut!","Cari PC buat {p} nih, budget {b}. Jangan sampai lag!"],
+    build:["Yo! Butuh PC buat {p}. Budget {b}, yang pas ya!","Cari PC buat {p} nih, budget {b}. Bisa dibantu?"],
     fix:["Gawat! PC-ku bermasalah pas mau mabar: {s}!","Bantu cepet! PC-ku begini: {s}. Mau mabar nih!"],
     happy:["GG! Siap tempur lagi, makasih!","Mantap jiwa! Auto naik rank nih!"],
-    wrong:["Hah? Itu mah bukan, bikin lag!","Salah build! Coba lagi dong."],
+    wrong:["Hah? Itu mah bukan yang kucari!","Salah build! Coba lagi dong."],
     leave:["Kelamaan! Match-ku keburu mulai, cabut!","AFK dulu, cari toko lain."]},
   p06:{ /* gamer, dingin & kompetitif */
-    build:["Butuh PC buat {p}. Budget {b}. Spek harus sebanding.","PC buat {p}, budget {b}. Aku nggak mau yang setengah-setengah."],
+    build:["Butuh PC buat {p}. Budget {b}. Pilih yang tepat.","PC buat {p}, budget {b}. Aku nggak mau yang setengah-setengah."],
     fix:["PC-ku bermasalah: {s}. Cepat tangani.","Ada masalah: {s}. Aku tunggu hasilnya."],
     happy:["Lumayan. Performanya sesuai harapan.","Oke, boleh juga. Kerja bagus."],
     wrong:["Bukan itu. Aku butuh yang tepat.","Kamu yakin? Rasanya kurang pas."],
     leave:["Waktuku berharga. Aku pergi.","Terlalu lambat. Sampai jumpa."]},
   p07:{ /* kerja berat, teknis & tak sabar */
-    build:["Aku butuh PC buat {p}. Budget {b}. Core banyak, RAM gede!","Cari PC buat {p}, budget {b}. Render nggak boleh lemot!"],
+    build:["Aku butuh PC buat {p}. Budget {b}. Tolong yang sesuai!","Cari PC buat {p}, budget {b}. Jangan salah pilih ya!"],
     fix:["Kerjaanku terhenti gara-gara ini: {s}. Tolong cepat!","PC kerja beratku bermasalah: {s}. Proyekku nunggu!"],
     happy:["Nah, kerjaanku bisa jalan lagi. Makasih!","Mantap, tenaganya terasa. Sip!"],
-    wrong:["Itu nggak bakal kuat buat kerjaanku!","Spek segitu? Bakal ngadat nanti."],
+    wrong:["Itu bukan yang kubutuhkan!","Paket segitu nggak cocok buatku."],
     leave:["Kerjaanku keburu telat. Pergi!","Kelamaan, cari tempat lain."]},
   p08:{ /* panik, gugup */
     build:["Eh, tolong! Aku butuh PC buat {p}, budget {b}...","Anu... butuh PC buat {p}. Budget {b}, bisa kan?"],
@@ -7574,7 +7592,7 @@ const DD_VOICE_={
     wrong:["Aduh, kok malah gitu...!","Waduh, bukan itu! Gimana nih?"],
     leave:["Nggak kuat nunggu, aku pergi dulu!","Aduh, bingung, pulang aja deh."]},
   vip:{ /* elegan, berwibawa */
-    build:["Saya butuh PC untuk {p} kelas tertinggi. Anggaran {b}, kualitas nomor satu.","Siapkan yang terbaik untuk {p}. Anggaran saya {b}."],
+    build:["Saya butuh PC untuk {p}. Anggaran {b}, kualitas nomor satu.","Siapkan yang terbaik untuk {p}. Anggaran saya {b}."],
     fix:["Ada masalah pada PC saya: {s}. Tangani dengan baik."],
     wrong:["Ini di bawah standar saya.","Saya mengharapkan yang lebih baik."],
     leave:["Saya tidak terbiasa menunggu. Permisi.","Pelayanan seperti ini tidak layak."]}
@@ -7752,7 +7770,8 @@ function ddFx_(msg, good){
   const stn=i>=0 && document.getElementById('cust-'+i); if(!stn) return;
   const aa=dd.active[i], isVip=!!(aa&&aa.cust.vip), tip=good?ddVipTip_(aa):0;
   const leave=/pergi/.test(msg), kind=good?'happy':(leave?'leave':'wrong');
-  const vo=aa&&aa.cust&&DD_VOICE_[aa.cust.chr]; const line=ddPick_((good&&isVip)?DD_SAY_.vip:((vo&&vo[kind])||DD_SAY_[kind]));
+  const vo=aa&&aa.cust&&DD_VOICE_[aa.cust.chr]; const noStock=/^Stok /.test(msg);
+  const line=noStock?ddPick_(['Yah, stoknya habis ya\u2026','Nggak ada stok? Sayang sekali.','Paket yang kucari kosong nih\u2026']):ddPick_((good&&isVip)?DD_SAY_.vip:((vo&&vo[kind])||DD_SAY_[kind]));
   dsfx(kind==='happy'?'correct':kind); if(kind==='happy'&&isVip&&tip) dsfx('vipwin');
   const pop=document.createElement('div');
   pop.className='fx-pop'+(good&&isVip?' vip':''); pop.textContent=good?(isVip?'\uD83D\uDC51 +'+(20+tip)+(tip?' TIP!':''):'+\u2B50'):'\uD83D\uDC94';

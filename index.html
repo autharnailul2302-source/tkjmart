@@ -4164,11 +4164,19 @@ const GURU_PS = 15;
 function guruKey_(r){ return r.RowKey || ''; }
 function guruDate_(r){ const d = new Date(r.Timestamp); return isNaN(d) ? null : d; }
 function guruDateStr_(r){ const d = guruDate_(r); return d ? d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}) : '\u2014'; }
-function guruKelasKey_(v){ return String(v==null?'':v).trim().replace(/\s+/g,' ').toLowerCase(); }
+/* Kelas diseragamkan: "x tkj 1", "X-TKJ1", "xtkj 1", "10 TKJ 1" => "X TKJ 1" */
+function canonKelas_(v){
+  let t = String(v==null?'':v).toUpperCase().replace(/[.\-_\/,]+/g,' ');
+  t = t.replace(/([A-Z])(\d)/g,'$1 $2').replace(/(\d)([A-Z])/g,'$1 $2').replace(/\s+/g,' ').trim();
+  if(!/^(XII|XI|X)( |$)/.test(t)) t = t.replace(/^(XII|XI|X)(?=[A-Z]{2,})/,'$1 ');
+  t = t.replace(/^(10|11|12)(?= )/,function(m){ return {'10':'X','11':'XI','12':'XII'}[m]; });
+  return t.replace(/\s+/g,' ').trim();
+}
+function guruKelasKey_(v){ return canonKelas_(v); }
 function guruBuildFilters_(){
   const kelas = {}, tahap = {};
   guruRows_.forEach(r=>{
-    const k = guruKelasKey_(r.Kelas); if(k && !kelas[k]) kelas[k] = String(r.Kelas).trim().replace(/\s+/g,' ');
+    const k = guruKelasKey_(r.Kelas); if(k) kelas[k] = k;
     const t = String(r.Tahap||'').trim(); if(t) tahap[t] = t;
   });
   const fill = (id, map, all)=>{ const el = document.getElementById(id); el.innerHTML = '<option value="">'+all+'</option>' +
@@ -4219,7 +4227,7 @@ function renderGuru_(){
     tbody.innerHTML = slice.map(r=>{
       const key = guruKey_(r), picked = guruSel_.has(key);
       return '<tr class="'+(picked?'gd-picked':'')+'"><td><input type="checkbox" class="gd-sel" '+(key?'':'disabled ')+(picked?'checked ':'')+'data-k="'+escapeHtml_(key)+'" onchange="guruToggle_(this)" aria-label="Pilih '+escapeHtml_(r.Nama)+'"></td>'+
-      '<td class="hi">'+escapeHtml_(r.Nama)+'</td><td>'+escapeHtml_(r.Kelas)+'</td><td>'+guruDateStr_(r)+'</td><td>'+escapeHtml_(r.Tier)+'</td>'+
+      '<td class="hi">'+escapeHtml_(r.Nama)+'</td><td>'+escapeHtml_(canonKelas_(r.Kelas))+'</td><td>'+guruDateStr_(r)+'</td><td>'+escapeHtml_(r.Tier)+'</td>'+
       '<td>'+(r.SkorSertifikasi||0)+'</td><td>'+(r.RepScore||0)+'</td><td>'+rupiah(Number(r.Omzet)||0)+'</td>'+
       '<td>'+escapeHtml_(r.PredikatAkhir||'-')+'</td><td>'+escapeHtml_(r.Tahap||'-')+'</td>'+
       '<td>'+(guruHw_(r)?'\u2705 Boleh Praktik':'\u2014')+'</td>'+
@@ -4274,7 +4282,7 @@ function guruExport_(){
   guruView_.forEach(r=>{
     const p = guruPct_(r), d = guruDate_(r);
     const k3 = Number(r.K3Soal)||0, id = Number(r.IdSoal)||0;
-    lines.push([r.Nama, r.Kelas, r.Sekolah, d? d.toISOString().slice(0,10) : '', r.Tier, Number(r.SkorSertifikasi)||0, Number(r.RepScore)||0, Number(r.Omzet)||0,
+    lines.push([r.Nama, canonKelas_(r.Kelas), r.Sekolah, d? d.toISOString().slice(0,10) : '', r.Tier, Number(r.SkorSertifikasi)||0, Number(r.RepScore)||0, Number(r.Omzet)||0,
       r.PredikatAkhir||'', r.Tahap||'', guruHw_(r)?'Ya':'Tidak', Number(r.XP)||0, Number(r.BintangTerbaik)||0, p===null?'':p,
       k3?(Number(r.K3BenarPertama)||0)+'/'+k3:'', id?(Number(r.IdBenarPertama)||0)+'/'+id:'', Number(r.RataDetikJawab)||'',
       String(r.SoalSulit||'').split(',').filter(Boolean).map(guruTopicName_).join(' | ')].map(guruCsvCell_).join(';'));
@@ -5496,7 +5504,7 @@ function clearRegErrors_(){ ['player-name-field','player-kelas-field','player-se
 });
 function confirmPlayerName(){
   const v = document.getElementById('player-name-field').value.trim();
-  const kelas = document.getElementById('player-kelas-field').value.trim();
+  const kelas = canonKelas_(document.getElementById('player-kelas-field').value);
   const sekolah = canonSekolah_(document.getElementById('player-sekolah-field').value);
   // Validasi: nama, kelas, dan asal sekolah wajib (dipakai papan peringkat & rekap guru)
   clearRegErrors_();

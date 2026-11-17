@@ -2871,6 +2871,8 @@ table.data-table td.hi{color:var(--text);font-weight:700;}
         <label class="gd-f gd-q">Nama ujian<input type="text" id="ujg-label" maxlength="50" placeholder="Contoh: PTS Rakit PC X TKJ 1" autocomplete="off"></label>
         <label class="gd-f">Berlaku<select id="ujg-jam"><option value="2">2 jam</option><option value="4">4 jam</option><option value="24" selected>1 hari</option><option value="72">3 hari</option><option value="168">7 hari</option></select></label>
         <label class="gd-f">Tahap ujian<select id="ujg-jenis"><option value="keduanya" selected>Pemula lalu Mahir</option><option value="pemula">Pemula saja</option><option value="mahir">Mahir saja</option></select></label>
+        <label class="gd-f">Waktu Pemula<select id="ujg-menitp"><option value="0">Tanpa batas</option><option value="5">5 menit</option><option value="10" selected>10 menit</option><option value="15">15 menit</option><option value="20">20 menit</option><option value="30">30 menit</option></select></label>
+        <label class="gd-f">Waktu Mahir<select id="ujg-menit"><option value="10">10 menit</option><option value="15">15 menit</option><option value="20" selected>20 menit</option><option value="30">30 menit</option><option value="45">45 menit</option><option value="60">60 menit</option><option value="90">90 menit</option></select></label>
         <label class="gd-f">Kesempatan<select id="ujg-maks"><option value="1" selected>1 kali</option><option value="2">2 kali</option><option value="3">3 kali</option><option value="99">Bebas</option></select></label>
         <button type="button" class="btn primary" style="margin:0;padding:8px 16px;" onclick="ujianBuatKode_()">+ Buat Kode</button>
       </div>
@@ -8154,13 +8156,13 @@ async function ujianMulai_(){
   try{ rememberKelasIfNew_(kelas); }catch(e){}
   const btn = document.getElementById('uj-start');
   btn.disabled = true; setMsg_('uj-msg','Memeriksa kode...','ok');
-  const r = (kode==='UJI-DEMO') ? {ok:true, kode:'UJI-DEMO', label:'Uji Coba (contoh)', sekolah:'(contoh)', jenis:'keduanya'} : await apiPost_('cekKodeUjian', {kode, nama}, 15000);
+  const r = (kode==='UJI-DEMO') ? {ok:true, kode:'UJI-DEMO', label:'Uji Coba (contoh)', sekolah:'(contoh)', jenis:'keduanya', durasiPemula:10} : await apiPost_('cekKodeUjian', {kode, nama}, 15000);
   btn.disabled = false;
   if(!r || !r.ok){ setMsg_('uj-msg', ujianErrText_(r && r.error), 'err'); return; }
   setMsg_('uj-msg','','');
   UJ = {kode:r.kode, label:r.label||'', sekolah:r.sekolah||'', nama, kelas,
         sesiId:'U'+Date.now().toString(36)+Math.random().toString(36).slice(2,7), mulai:Date.now(), hasil:null, sync:''};
-  UJ.jenis = r.jenis || 'mahir'; window.__pem = (UJ.jenis !== 'mahir');
+  UJ.jenis = r.jenis || 'mahir'; EX_LIMIT_ = (Number(r.durasi)||20)*60; window.__pemLimit = (Number(r.durasiPemula)||0)*60; window.__pem = (UJ.jenis !== 'mahir');
   try{ startAssembly('ujian'); } finally { window.__pem = false; }
   UJ.mulai = asm.t0;
 }
@@ -8169,7 +8171,7 @@ async function ujianMulai_(){
 /* =========================================================
    UJIAN RAKIT PC — bebas urutan, tanpa petunjuk, dengan timer, dinilai saat dikumpulkan
    ========================================================= */
-const EX_LIMIT_ = 20*60;   // detik
+let EX_LIMIT_ = 20*60;   // detik
 const EX_CATS_ = [['mobo','Motherboard','\u{1F5A5}\uFE0F'],['cpu','CPU','\u2699\uFE0F'],['cooler','Cooler','\u2744\uFE0F'],['ram','RAM','\u{1F9EE}'],['psu','PSU','\u{1F50C}'],['storage','Storage','\u{1F4BE}'],['gpu','GPU','\u{1F3AE}'],['cables','Kabel','\u{1F517}'],['os','OS','\u{1F4BF}']];
 let exTimer_ = null;
 function examStart_(){
@@ -8336,7 +8338,7 @@ function examTutorial_(first){
     // kotak penjelasan: letakkan di sisi yang lega
     const tip = document.createElement('div'); tip.className='tip';
     const last = i===EX_TUT_.length-1;
-    tip.innerHTML = '<h4>'+st.t+'</h4><p>'+st.p+'</p><div class="row"><div class="dots">'+EX_TUT_.map((_,n)=>'<i class="'+(n===i?'on':'')+'"></i>').join('')+'</div>'
+    tip.innerHTML = '<h4>'+st.t+'</h4><p>'+st.p.replace('<b>20 menit</b>','<b>'+Math.round(EX_LIMIT_/60)+' menit</b>')+'</p><div class="row"><div class="dots">'+EX_TUT_.map((_,n)=>'<i class="'+(n===i?'on':'')+'"></i>').join('')+'</div>'
       + (last?'':'<button type="button" class="skip" data-a="skip">Lewati</button>')
       + (i>0?'<button type="button" class="btn ghost" data-a="prev">Kembali</button>':'')
       + '<button type="button" class="btn primary" data-a="next">'+(last?(first?'Mulai Ujian \u25B6':'Tutup'):'Lanjut')+'</button></div>';
@@ -8487,6 +8489,9 @@ function ujianSelesai_(){
 
 /* ---------------- PANEL GURU ---------------- */
 let ujgData_ = {kode:[], hasil:[]};
+function ujgWaktu_(k){ const p = Number(k.DurasiPemula)||0, m = Number(k.DurasiMenit)||20, tp = p ? p+' mnt' : 'tanpa batas';
+  return k.Jenis==='pemula' ? 'Waktu '+tp : (k.Jenis==='keduanya' ? 'Pemula '+tp+', Mahir '+m+' mnt' : 'Waktu '+m+' mnt'); }
+function ujgTahapLabel_(h){ const n = ujgSkenarioName_(h.Skenario); return (h.Skenario==='pemula' && h.TahapSelesai!==undefined && h.TahapSelesai!=='') ? n+' ('+Number(h.TahapSelesai)+'/9 selesai)' : n; }
 function ujgSkenarioName_(id){ if(id==='pemula') return 'Tahap Pemula'; const s = UJIAN_SCN.find(x=>x.id===id); return s ? s.label.replace('Skenario: ','') : (id||''); }
 function ujgParseTahap_(v){ try{ const o = JSON.parse(v||'{}'); return (o && typeof o==='object') ? o : {}; }catch(e){ return {}; } }
 function ujgFmtTgl_(v){ const d = new Date(v); return isNaN(d) ? '-' : d.toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }
@@ -8507,7 +8512,7 @@ async function ujianGuruLoad_(){
   }
   const lbl_ = {}; (r.kode||[]).forEach(k=>{ lbl_[k.Kode]=k.Label; });
   const pem_ = (r.pemula||[]).map(x=>({Timestamp:x.Timestamp, SesiId:x.SesiId, Kode:x.Kode, Label:lbl_[x.Kode]||'', Nama:x.Nama, Kelas:x.Kelas, Sekolah:x.Sekolah, Skenario:'pemula',
-    Salah:(Number(x.SalahUrutan)||0)+(Number(x.SalahSlot)||0), SalahPerTahap:x.SalahPerTahap, DurasiDetik:x.DurasiDetik, Skor:x.Skor, Predikat:x.Predikat}));
+    Salah:(Number(x.SalahUrutan)||0)+(Number(x.SalahSlot)||0), SalahPerTahap:x.SalahPerTahap, DurasiDetik:x.DurasiDetik, Skor:x.Skor, Predikat:x.Predikat, TahapSelesai:x.TahapSelesai}));
   ujgReal_ = {kode:r.kode||[], hasil:(r.hasil||[]).concat(pem_)};
   ujgData_ = ujgDemo_ ? ujgMerge_() : ujgReal_;
   const sel = document.getElementById('ujg-filter'), prev = sel.value;
@@ -8521,7 +8526,7 @@ function ujianRenderKode_(){
   if(!ujgData_.kode.length){ box.innerHTML = '<p style="opacity:.8">Belum ada kode ujian. Isi nama ujian lalu klik &quot;Buat Kode&quot;.</p>'; return; }
   box.innerHTML = ujgData_.kode.filter(k=>/^[A-Z0-9-]+$/.test(String(k.Kode))).map(k=>{
     const st = ujgStatus_(k), maks = Number(k.MaksPercobaan)||1;
-    return '<div class="ujg-kode"><div><b class="ujg-code">'+k.Kode+'</b><small>'+escapeHtml_(k.Label||'')+' \u00B7 '+st.txt+' \u00B7 '+(cnt[k.Kode]||0)+' hasil \u00B7 '+({pemula:'Pemula saja',keduanya:'Pemula + Mahir'}[k.Jenis]||'Mahir saja')+' \u00B7 '+(maks>=99?'bebas':maks+'x')+' per siswa</small></div>'
+    return '<div class="ujg-kode"><div><b class="ujg-code">'+k.Kode+'</b><small>'+escapeHtml_(k.Label||'')+' \u00B7 '+st.txt+' \u00B7 '+(cnt[k.Kode]||0)+' hasil \u00B7 '+({pemula:'Pemula saja',keduanya:'Pemula + Mahir'}[k.Jenis]||'Mahir saja')+' \u00B7 '+ujgWaktu_(k)+' \u00B7 '+(maks>=99?'bebas':maks+'x')+' per siswa</small></div>'
       +'<span><button type="button" class="btn ghost" onclick="ujianSalin_(\''+k.Kode+'\')">Salin</button>'
       +'<button type="button" class="btn ghost" onclick="ujianToggle_(\''+k.Kode+'\','+(st.aktif?'false':'true')+')">'+(st.aktif?'Tutup':'Buka kembali')+'</button></span></div>';
   }).join('');
@@ -8531,7 +8536,7 @@ async function ujianBuatKode_(){
   const label = document.getElementById('ujg-label').value.trim();
   if(!label){ setMsg_('ujg-msg','Isi nama ujian dulu, misalnya "PTS Rakit PC X TKJ 1".','err'); return; }
   setMsg_('ujg-msg','Membuat kode...','ok');
-  const r = await apiPost_('buatKodeUjian', {sessionToken:s.token, label, jam:Number(document.getElementById('ujg-jam').value)||24, maks:Number(document.getElementById('ujg-maks').value)||1, jenis:document.getElementById('ujg-jenis').value}, 20000);
+  const r = await apiPost_('buatKodeUjian', {sessionToken:s.token, label, jam:Number(document.getElementById('ujg-jam').value)||24, maks:Number(document.getElementById('ujg-maks').value)||1, jenis:document.getElementById('ujg-jenis').value, menit:Number(document.getElementById('ujg-menit').value)||20, menitPemula:Number(document.getElementById('ujg-menitp').value)||0}, 20000);
   if(!r || !r.ok){ setMsg_('ujg-msg', r && r.error==='session-invalid' ? 'Sesi login berakhir, silakan login ulang.' : (r && r.error==='unknown-action' ? 'Server belum diperbarui. Tempel Code.gs versi baru lalu Deploy ulang.' : 'Gagal membuat kode.'), 'err'); return; }
   document.getElementById('ujg-label').value = '';
   setMsg_('ujg-msg','Kode dibuat: '+r.kode+'. Bagikan ke siswa.','ok');
@@ -8599,7 +8604,7 @@ function ujianRenderHasil_(){
   tb.innerHTML = rows.slice(guruPage_*GURU_PS, guruPage_*GURU_PS+GURU_PS).map(h=>{
     const t = ujgParseTahap_(h.SalahPerTahap), top = Object.keys(t).sort((a,b)=>t[b]-t[a])[0], pr = String(h.Predikat||'');
     return '<tr><td class="hi">'+escapeHtml_(h.Nama)+'<small>'+escapeHtml_(canonKelas_(h.Kelas))+'</small></td><td>'+ujgFmtTgl_(h.Timestamp)+'</td>'+
-      '<td>'+escapeHtml_(h.Label||h.Kode)+'<small>'+escapeHtml_(h.Kode)+'</small></td><td>'+escapeHtml_(ujgSkenarioName_(h.Skenario))+'</td>'+
+      '<td>'+escapeHtml_(h.Label||h.Kode)+'<small>'+escapeHtml_(h.Kode)+'</small></td><td>'+escapeHtml_(ujgTahapLabel_(h))+((h.Skenario==='pemula' && h.TahapSelesai!==undefined && h.TahapSelesai!=='' && Number(h.TahapSelesai)<9)?' <small style="color:#ff8a80">waktu habis / belum tuntas</small>':'')+'</td>'+
       '<td>'+guruScore_(h.Skor,100)+'</td><td>'+(Number(h.Salah)||0)+'</td><td>'+(top && t[top] ? escapeHtml_(UJ_STEP_NAMES_[top]||top)+' ('+t[top]+')' : '-')+'</td>'+
       '<td>'+guruDur_(h.DurasiDetik)+'</td><td>'+guruChip_(pr, /lulus|kompeten|baik|mahir/i.test(pr)?'ok':'')+'</td></tr>';
   }).join('');
@@ -8612,7 +8617,7 @@ function ujianExportCsv_(){
   const lines = [head.map(guruCsvCell_).join(';')];
   rows.forEach(h=>{
     const t = ujgParseTahap_(h.SalahPerTahap);
-    lines.push([ujgFmtTgl_(h.Timestamp), h.Nama, h.Kelas, h.Kode, h.Label, ujgSkenarioName_(h.Skenario), Number(h.Salah)||0, Number(h.Skor)||0, h.Predikat, Number(h.DurasiDetik)||0]
+    lines.push([ujgFmtTgl_(h.Timestamp), h.Nama, h.Kelas, h.Kode, h.Label, ujgTahapLabel_(h), Number(h.Salah)||0, Number(h.Skor)||0, h.Predikat, Number(h.DurasiDetik)||0]
       .concat(ASM_STEPS.map(k=>Number(t[k])||0)).map(guruCsvCell_).join(';'));
   });
   const blob = new Blob(['\uFEFF'+lines.join('\r\n')], {type:'text/csv;charset=utf-8'});
@@ -9601,12 +9606,14 @@ function renderEndingReport(){
   }
 
   function skor_(P){ return {u:Math.max(0,50-P.order*10), s:Math.max(0,30-P.slot*5), b:Math.max(0,20-P.hints*4)}; }
-  function finish_(){
+  function finish_(timeout){
     if(!asm || !asm.pem || asm.exDone) return;
     asm.exDone = true; clearInterval(exTimer_);
-    const P = asm.pem, sc = skor_(P), skor = sc.u+sc.s+sc.b;
+    const P = asm.pem, sc = skor_(P);
+    let skor = sc.u+sc.s+sc.b;
+    if(timeout && P.step < STEPS.length) skor = Math.round(skor * P.step / STEPS.length);   // waktu habis: skor dikali porsi tahap yang selesai
     const h = {kode:UJ.kode, sesiId:UJ.sesiId, mulai:UJ.mulai, nama:UJ.nama, kelas:UJ.kelas, skenario:'pemula', skor:skor, predikat:ujianPredikat_(skor),
-      salah:P.order+P.slot, salahUrutan:P.order, salahSlot:P.slot, bantuan:P.hints, salahPerTahap:Object.assign({},P.by),
+      salah:P.order+P.slot, salahUrutan:P.order, salahSlot:P.slot, bantuan:P.hints, tahapSelesai:P.step, salahPerTahap:Object.assign({},P.by),
       detik:Math.round((Date.now()-asm.t0)/1000)};
     window.__pemCur = {sesiId:h.sesiId, sync:'sending'};
     ujianShowResult_(h);
@@ -9660,6 +9667,7 @@ function renderEndingReport(){
       $('asm-scenario-text').innerHTML = 'Rakit PC <b>selangkah demi selangkah</b>. Semua komponen sudah tersedia di meja kerja. Ikuti tahapan, lalu seret komponen ke slot di casing.';
       $('rack-title').textContent = 'Meja kerja';
       syncTab_(); exRedraw_(); render_();
+      const lim = window.__pemLimit||0; $('ex-time').textContent = lim ? Math.floor(lim/60)+':00' : '0:00';
     }
     return r;
   });
@@ -9674,9 +9682,13 @@ function renderEndingReport(){
     if(!(asm && asm.pem)) return o.apply(this,a);
     const scr = $('screen-assembly');
     if(asm.exDone || !scr.classList.contains('active')){ clearInterval(exTimer_); return; }
-    const t = Math.floor((Date.now()-asm.t0)/1000);
-    $('ex-time').textContent = Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
-    const tb = $('ex-timebar-i'); if(tb) tb.style.width = (asm.pem.step/STEPS.length*100)+'%';
+    const t = Math.floor((Date.now()-asm.t0)/1000), lim = window.__pemLimit||0;
+    const shown = lim ? Math.max(0, lim-t) : t;
+    $('ex-time').textContent = Math.floor(shown/60)+':'+String(shown%60).padStart(2,'0');
+    const tb = $('ex-timebar-i'), low = lim && shown <= Math.min(60, lim*0.2);
+    if(tb){ tb.style.width = (lim ? shown/lim*100 : asm.pem.step/STEPS.length*100)+'%'; tb.parentNode.classList.toggle('low', !!low); }
+    $('ex-timer').classList.toggle('low', !!low);
+    if(lim && shown<=0){ clearInterval(exTimer_); try{ asmToast('info','Waktu habis','Tahap Pemula dikumpulkan otomatis.',3500); }catch(e){} finish_(true); }
   });
   wrap('examSubmit_', function(o,a){
     if(!(asm && asm.pem)) return o.apply(this,a);

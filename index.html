@@ -9789,5 +9789,74 @@ function renderEndingReport(){
     s.className='ujx-codestat'+(ok?' ok':''); s.textContent = ok ? 'Format kode benar' : (k.value ? 'Kode belum lengkap' : 'Masukkan kode dari gurumu, contoh: UJI-AB12C'); });
 })();
 </script>
+<script id="hw-js">
+/* ===== REALISME HARDWARE: lapisan detail (tanpa mengubah slot / logika) ===== */
+(function(){
+  const T = (x,y,s,o={}) => '<text x="'+x+'" y="'+y+'" font-size="'+(o.fs||5.2)+'" fill="rgba(235,240,245,'+(o.a||.5)+')" font-family="monospace" letter-spacing=".4"'+(o.rot?' transform="rotate('+o.rot+' '+x+' '+y+')"':'')+' pointer-events="none">'+s+'</text>';
+  const cap = (x,y,r,col) => '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#aab3bc" stroke="#5c6772"/><circle cx="'+x+'" cy="'+y+'" r="'+(r-1.8)+'" fill="#1b2128"/><path d="M'+(x-r*.55)+' '+(y-r*.55)+' A'+(r-2.4)+' '+(r-2.4)+' 0 0 1 '+(x+r*.55)+' '+(y-r*.55)+'" fill="none" stroke="'+(col||'#d4a017')+'" stroke-width="1.3"/>';
+  const choke = (x,y,s) => '<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" rx="2" fill="#2a3139" stroke="#7d8996"/><rect x="'+(x+2.5)+'" y="'+(y+2.5)+'" width="'+(s-5)+'" height="'+(s-5)+'" rx="1" fill="#3a444e"/><circle cx="'+(x+s/2)+'" cy="'+(y+s/2)+'" r="1.4" fill="#8c97a3"/>';
+  const hdr = (x,y,c,r) => { let s='<rect x="'+x+'" y="'+y+'" width="'+(c*5+2)+'" height="'+(r*5+2)+'" fill="#0c1015" stroke="#56636f"/>'; for(let i=0;i<c;i++) for(let j=0;j<r;j++) s+='<rect x="'+(x+2+i*5)+'" y="'+(y+2+j*5)+'" width="2.6" height="2.6" fill="#d4b24a"/>'; return s; };
+
+  function boardDeco_(m){
+    let s = '<g pointer-events="none">';
+    // jalur PCB tipis
+    for(let i=0;i<8;i++) s += '<path d="M196 '+(76+i*9)+' H236" stroke="rgba(255,255,255,.07)" fill="none"/>';
+    for(let x=112;x<=172;x+=10) s += '<path d="M'+x+' 156 V240" stroke="rgba(255,255,255,.06)" fill="none"/>';
+    s += '<path d="M285 205 V276 H252" stroke="rgba(255,255,255,.06)" fill="none"/><path d="M262 200 V206" stroke="rgba(255,255,255,.07)" fill="none"/>';
+    s += '<rect x="33" y="33" width="324" height="284" rx="6" fill="none" stroke="rgba(255,255,255,.07)"/>';
+    // sisi kanan RAM: kapasitor + choke (area VRM memori)
+    for(let i=0;i<6;i++) s += cap(296, 78+i*20, 6);
+    for(let i=0;i<3;i++) s += choke(314, 84+i*22, 13);
+    // di bawah socket: codec audio + kapasitor kecil
+    s += '<rect x="112" y="180" width="18" height="18" rx="1.5" fill="#12171d" stroke="#56636f"/>'+T(114,191,'ALC',{fs:5,a:.7});
+    [142,154,166].forEach(x=>{ s += cap(x,190,4,'#c9a227'); });
+    // header kipas CPU (4-pin, putih)
+    s += '<rect x="172" y="33" width="26" height="12" rx="1.5" fill="#e9eef2" stroke="#8d97a2"/>';
+    for(let i=0;i<4;i++) s += '<rect x="'+(175+i*5.5)+'" y="37" width="3" height="6" fill="#2a3139"/>';
+    s += '<rect x="196" y="36" width="3" height="6" fill="#e9eef2" stroke="#8d97a2"/>';
+    // header kipas casing + panel depan + USB
+    s += '<rect x="218" y="302" width="24" height="12" rx="1.5" fill="#e9eef2" stroke="#8d97a2"/>';
+    for(let i=0;i<3;i++) s += '<rect x="'+(222+i*6)+'" y="306" width="3" height="6" fill="#2a3139"/>';
+    s += hdr(300,305,5,2)+hdr(158,298,5,2);
+    // heatsink chipset: sirip + sekrup
+    s += '<rect x="252" y="278" width="36" height="34" rx="3" fill="url(#fins)" opacity=".5"/>';
+    [[256,282],[284,282],[256,308],[284,308]].forEach(p=>{ s += '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.6" fill="#aab3bc"/>'; });
+    // standoff M.2 + kait slot PCIe x16 + rangka logam slot
+    s += '<circle cx="268" cy="218" r="3.2" fill="#c5ccd3" stroke="#5c6772"/><circle cx="268" cy="218" r="1.2" fill="#2a3139"/>';
+    s += '<rect x="68" y="241" width="234" height="14" rx="2" fill="none" stroke="#8c97a3" stroke-width="1.2"/><rect x="302" y="240" width="12" height="16" rx="2" fill="#2f3a46" stroke="#8c97a3"/><rect x="305" y="243" width="6" height="4" fill="#d4a017"/>';
+    // sablon (silkscreen)
+    s += T(173,32,'CPU_FAN')+T(219,300,'SYS_FAN')+T(70,239,'PCIEX16_1')+T(70,280,'PCIEX1_1')+T(272,216,'M2_1')+T(298,276,'SATA3 1-4')+T(300,303,'F_PANEL')+T(158,296,'USB')+T(112,178,'AUDIO')
+        + T(283,150,(m.ram||'DDR4')+'_A1  A2',{rot:-90})+T(196,309,'BAT',{fs:4.6})+T(252,276,'PCH',{fs:4.6});
+    return s + '</g>';
+  }
+  const _b = window.boardSVG_; if(typeof _b==='function') window.boardSVG_ = m => _b(m) + boardDeco_(m);
+
+  const _g = window.gpuSVG_;
+  if(typeof _g==='function') window.gpuSVG_ = c => {
+    const acc = c.power>=150 ? '#d2342f' : '#35a853';
+    let s = _g(c);
+    s += '<rect x="56" y="226" width="256" height="3" fill="'+acc+'" opacity=".85" pointer-events="none"/>';
+    for(let i=0;i<6;i++) s += '<rect x="'+(236+i*8)+'" y="'+(c.power>=150?232:233)+'" width="4" height="18" rx="1" fill="#0d0f13" opacity=".7" pointer-events="none"/>';
+    // konektor daya tambahan hanya untuk kartu di atas 75W (yang 75W cukup dari slot PCIe)
+    if(c.power>75){ const w = c.power>=150 ? 34 : 24; s += '<g pointer-events="none"><rect x="'+(308-w)+'" y="217" width="'+w+'" height="10" rx="1.5" fill="#15191f" stroke="#59636f"/>'+Array.from({length:Math.round(w/6)},(_,i)=>'<rect x="'+(311-w+i*6)+'" y="220" width="3" height="5" fill="#d4b24a"/>').join('')+'</g>'; }
+    s += '<g pointer-events="none"><rect x="46" y="230" width="8" height="5" fill="#0d0f13"/><rect x="46" y="238" width="8" height="5" fill="#0d0f13"/><rect x="46" y="246" width="8" height="5" fill="#0d0f13"/></g>';
+    return s;
+  };
+
+  const _r = window.ramSVG_;
+  if(typeof _r==='function') window.ramSVG_ = c => _r(c) + [240,262].map(sx=>'<rect x="'+(sx+8.5)+'" y="193" width="2.2" height="7" fill="#0a0d11" pointer-events="none"/><rect x="'+(sx+2)+'" y="63" width="12" height="4" rx="1" fill="#101418" pointer-events="none"/>').join('');
+
+  const _p = window.psuSVG_;
+  if(typeof _p==='function') window.psuSVG_ = c => {
+    let s = _p(c), vents='';
+    for(let i=0;i<10;i++) vents += '<rect x="'+(214+i*11)+'" y="346" width="7" height="2.4" rx="1" fill="#0f1317"/><rect x="'+(214+i*11)+'" y="402" width="7" height="2.4" rx="1" fill="#0f1317"/>';
+    s += '<g pointer-events="none">'+vents+'<rect x="40" y="378" width="26" height="22" rx="2" fill="#12161b" stroke="#59636f"/><text x="53" y="392" text-anchor="middle" font-size="6" fill="#9fb0c0" font-family="monospace">AC IN</text><rect x="316" y="396" width="34" height="9" rx="1.5" fill="#d4a017" opacity=".9"/><text x="333" y="403.5" text-anchor="middle" font-size="5.5" font-weight="800" fill="#241a00" font-family="monospace">80 PLUS</text></g>';
+    return s;
+  };
+
+  const _c = window.coolerSVG_;
+  if(typeof _c==='function') window.coolerSVG_ = c => _c(c) + (c.price===0 ? '' : [[100,60],[200,60],[100,160],[200,160]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="2.4" fill="#aab3bc" stroke="#4d5b69" pointer-events="none"/>').join(''));
+})();
+</script>
 </body>
 </html>

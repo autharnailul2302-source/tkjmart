@@ -2493,15 +2493,53 @@ table.data-table td.hi{color:var(--text);font-weight:700;}
 .rd-pw{margin-top:8px !important;}
 @media (prefers-reduced-motion:reduce){#case-svg g.part-in,#case-svg .slot.target{animation:none !important;}}
 /* ===== MODE PEMULA ===== */
-.pm-steps{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
-.pm-st{padding:3px 10px;border-radius:99px;font-size:12px;border:1px solid var(--line);color:var(--text-dim);}
-.pm-st.done{border-color:var(--circuit);color:var(--circuit);}
-.pm-st.now{background:var(--copper-bright,#ffc857);border-color:var(--copper-bright,#ffc857);color:#1b1405;font-weight:700;}
-.pm-now{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;margin-bottom:10px;border:1px solid var(--copper-bright,#ffc857);border-radius:12px;background:rgba(255,200,87,.08);font-size:15px;}
-.pm-now b{color:var(--copper-bright,#ffc857);}
-.pm-hint{flex:none;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:inherit;cursor:pointer;font:600 12px var(--mono);}
+.pm-steps{display:grid;grid-template-columns:repeat(9,1fr);margin:2px 0 14px;}
+.pm-st{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;color:var(--text-dim);text-align:center;}
+.pm-st i{position:relative;z-index:1;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--mono);font-style:normal;background:#16263d;border:2px solid #2d4466;}
+.pm-st::before{content:"";position:absolute;top:12px;right:50%;width:100%;height:2px;background:#2d4466;}
+.pm-st:first-child::before{display:none;}
+.pm-st.done i{background:#2bb98a;border-color:#6ff0c2;color:#04281c;} .pm-st.done::before{background:#2bb98a;} .pm-st.done{color:#6ff0c2;}
+.pm-st.now i{background:#ffc857;border-color:#ffe29a;color:#2a1a00;box-shadow:0 0 0 4px rgba(255,200,87,.25),0 0 14px rgba(255,200,87,.6);transform:scale(1.12);} .pm-st.now::before{background:#2bb98a;} .pm-st.now{color:#ffc857;font-weight:700;}
+.pm-now{display:flex;align-items:center;gap:14px;padding:12px 14px;margin-bottom:12px;border-radius:14px;border:1px solid rgba(255,200,87,.45);border-left:5px solid #ffc857;background:linear-gradient(90deg,rgba(255,200,87,.14),rgba(255,200,87,.03));}
+.pm-ico{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:24px;background:rgba(0,0,0,.28);}
+.pm-txt{flex:1;font-size:1.05rem;line-height:1.35;} .pm-txt small{display:block;margin-bottom:2px;font:700 11px var(--mono);letter-spacing:.08em;color:#ffc857;}
+.pm-txt b{color:#ffc857;}
+.pm-hint{flex:none;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:inherit;cursor:pointer;font:600 12px var(--mono);}
+.pm-hint:hover{background:rgba(255,200,87,.2);}
+@media (max-width:700px){.pm-st span{display:none;}}
+#screen-assembly.pem-mode .asm-scn{display:none;}
+#screen-assembly.pem-mode #ex-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+#screen-assembly.pem-mode #ex-grid .pc-img{height:50px;} #screen-assembly.pem-mode #ex-grid .pc-img img{max-height:46px;}
+#screen-assembly.pem-mode #ex-grid .pc-name{font-size:11.5px;line-height:1.25;}
+#screen-assembly.pem-mode #ex-grid .pc-chip{font-size:10px;padding:1px 6px;}
+#case-svg .slot.pm-soft:not(.hit):not(.target){stroke:rgba(255,200,87,.6) !important;stroke-width:2 !important;fill:rgba(255,200,87,.08) !important;}
+.pm-hint:disabled{opacity:.45;cursor:not-allowed;}
+
 #ex-grid .part-card.rd-hint{border-color:var(--copper-bright,#ffc857);animation:rdTgt 1.1s ease-in-out infinite;}
 #pm-start{width:100%;margin-top:8px;}
+/* ===== REDESIGN: layar masuk ujian ===== */
+#screen-ujian-masuk .ujx-info h3{font-size:1.15rem;letter-spacing:.02em;margin:0 0 14px;}
+.ujx-path{display:flex;flex-direction:column;}
+.ujx-stage{display:flex;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02));box-shadow:0 8px 22px rgba(0,0,0,.28);transition:transform .2s,border-color .2s;}
+.ujx-stage:hover{transform:translateY(-2px);}
+.ujx-stage.s1:hover{border-color:#3ed6a0;} .ujx-stage.s2:hover{border-color:#ffc857;}
+.ujx-badge{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:800 17px var(--mono);color:#06210f;box-shadow:0 0 0 4px rgba(255,255,255,.06);}
+.s1 .ujx-badge{background:linear-gradient(145deg,#6ff0c2,#2bb98a);}
+.s2 .ujx-badge{background:linear-gradient(145deg,#ffd873,#f2a516);color:#2a1a00;}
+.ujx-stage h4{margin:0 0 4px;font-size:1.02rem;}
+.ujx-stage p{margin:0 0 8px;font-size:.92rem;line-height:1.45;color:var(--text-dim);}
+.ujx-stage ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px;}
+.ujx-stage li{padding:2px 10px;border-radius:99px;font-size:.78rem;border:1px solid var(--line);background:rgba(0,0,0,.2);}
+.ujx-link{width:2px;height:20px;margin:0 0 0 35px;background:repeating-linear-gradient(to bottom,#7fb3ff 0 4px,transparent 4px 8px);opacity:.7;}
+.ujx-note{margin:14px 0 6px;padding:10px 12px;border-left:3px solid #4aa3ff;border-radius:0 10px 10px 0;background:rgba(74,163,255,.1);font-size:.9rem;}
+.ujx-formtitle{margin:0 0 12px;font-size:1.15rem;}
+.ujx-ticket:focus-within{box-shadow:0 0 0 3px rgba(255,200,87,.35),0 12px 30px rgba(0,0,0,.35);transition:box-shadow .2s;}
+.ujx-codestat{margin:8px 2px 14px;font-size:.85rem;color:var(--text-dim);min-height:1.2em;}
+.ujx-codestat.ok{color:#3ed6a0;} .ujx-codestat.ok::before{content:"\2713  ";}
+#uj-start{min-height:52px;font-size:1.05rem;letter-spacing:.02em;}
+#uj-start::after{content:"  \2192";transition:margin-left .2s;} #uj-start:hover::after{margin-left:6px;}
+@media (max-width:860px){ #screen-ujian-masuk .ujx-form{order:-1;} }
+@media (prefers-reduced-motion:reduce){.ujx-stage,#uj-start::after{transition:none;}}
 </style>
 </head>
 <body>
@@ -2871,6 +2909,7 @@ table.data-table td.hi{color:var(--text);font-weight:700;}
         <label class="gd-f gd-q">Nama ujian<input type="text" id="ujg-label" maxlength="50" placeholder="Contoh: PTS Rakit PC X TKJ 1" autocomplete="off"></label>
         <label class="gd-f">Berlaku<select id="ujg-jam"><option value="2">2 jam</option><option value="4">4 jam</option><option value="24" selected>1 hari</option><option value="72">3 hari</option><option value="168">7 hari</option></select></label>
         <label class="gd-f">Tahap ujian<select id="ujg-jenis"><option value="keduanya" selected>Pemula lalu Mahir</option><option value="pemula">Pemula saja</option><option value="mahir">Mahir saja</option></select></label>
+        <label class="gd-f">Jatah bantuan (Pemula)<select id="ujg-bantuan"><option value="0">Tanpa bantuan</option><option value="2">2 kali</option><option value="4" selected>4 kali</option><option value="99">Tanpa batas</option></select></label>
         <label class="gd-f">Waktu Pemula<select id="ujg-menitp"><option value="0">Tanpa batas</option><option value="5">5 menit</option><option value="10" selected>10 menit</option><option value="15">15 menit</option><option value="20">20 menit</option><option value="30">30 menit</option></select></label>
         <label class="gd-f">Waktu Mahir<select id="ujg-menit"><option value="10">10 menit</option><option value="15">15 menit</option><option value="20" selected>20 menit</option><option value="30">30 menit</option><option value="45">45 menit</option><option value="60">60 menit</option><option value="90">90 menit</option></select></label>
         <label class="gd-f">Kesempatan<select id="ujg-maks"><option value="1" selected>1 kali</option><option value="2">2 kali</option><option value="3">3 kali</option><option value="99">Bebas</option></select></label>
@@ -3149,22 +3188,30 @@ table.data-table td.hi{color:var(--text);font-weight:700;}
   </div>
   <div class="ujx-wrap">
     <aside class="ujx-info">
-      <h3>Cara kerjanya</h3>
-      <ol class="ujx-steps">
-        <li><b>Masukkan kode ujian</b><span>Kode dibagikan gurumu untuk ujian ini.</span></li>
-        <li><b>Rakit PC sesuai skenario</b><span>Skenario diacak: PC kantor, desain grafis, atau gaming. Baca syaratnya baik-baik.</span></li>
-        <li><b>Hasil langsung ke guru</b><span>Skor, waktu, dan tahap yang salah tercatat otomatis.</span></li>
-      </ol>
-      <div class="ujx-rules">
-        <span>Tanpa petunjuk</span><span>Skenario acak</span><span>Skor 100, minus 10 tiap salah</span>
+      <h3>Jalur ujian</h3>
+      <div class="ujx-path">
+        <article class="ujx-stage s1"><span class="ujx-badge" aria-hidden="true">1</span><div>
+          <h4>Tahap Pemula</h4>
+          <p>Rakit PC <b>selangkah demi selangkah</b>. Semua komponen sudah tersedia, tinggal seret ke tempatnya.</p>
+          <ul><li>Ada tombol Bantuan</li><li>Dinilai dari urutan dan ketepatan slot</li></ul>
+        </div></article>
+        <div class="ujx-link" aria-hidden="true"></div>
+        <article class="ujx-stage s2"><span class="ujx-badge" aria-hidden="true">2</span><div>
+          <h4>Tahap Mahir</h4>
+          <p>Pilih sendiri komponen yang cocok untuk skenario acak: PC kantor, desain grafis, atau gaming.</p>
+          <ul><li>Tanpa petunjuk</li><li>Skor 100, minus 10 tiap salah</li></ul>
+        </div></article>
       </div>
-      <p class="ujx-safe">Ujian ini tidak mengubah progres ceritamu.</p>
+      <p class="ujx-note"><b>Gurumu yang menentukan</b> tahap yang kamu kerjakan: Pemula saja, Mahir saja, atau keduanya berurutan.</p>
+      <p class="ujx-safe">Hasil langsung masuk ke guru. Ujian ini tidak mengubah progres ceritamu.</p>
     </aside>
     <section class="ujx-form">
+      <h3 class="ujx-formtitle">Masuk ke ujian</h3>
       <div class="ujx-ticket">
         <label for="uj-kode">KODE UJIAN</label>
         <input type="text" id="uj-kode" maxlength="14" placeholder="UJI-XXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false">
       </div>
+      <p class="ujx-codestat" id="uj-codestat">Masukkan kode dari gurumu, contoh: UJI-AB12C</p>
       <div class="fld-row">
         <div class="fld">
           <label for="uj-nama">Nama <span class="req">*</span></label>
@@ -8156,13 +8203,13 @@ async function ujianMulai_(){
   try{ rememberKelasIfNew_(kelas); }catch(e){}
   const btn = document.getElementById('uj-start');
   btn.disabled = true; setMsg_('uj-msg','Memeriksa kode...','ok');
-  const r = (kode==='UJI-DEMO') ? {ok:true, kode:'UJI-DEMO', label:'Uji Coba (contoh)', sekolah:'(contoh)', jenis:'keduanya', durasiPemula:10} : await apiPost_('cekKodeUjian', {kode, nama}, 15000);
+  const r = (kode==='UJI-DEMO') ? {ok:true, kode:'UJI-DEMO', label:'Uji Coba (contoh)', sekolah:'(contoh)', jenis:'keduanya', durasiPemula:10, jatahBantuan:4} : await apiPost_('cekKodeUjian', {kode, nama}, 15000);
   btn.disabled = false;
   if(!r || !r.ok){ setMsg_('uj-msg', ujianErrText_(r && r.error), 'err'); return; }
   setMsg_('uj-msg','','');
   UJ = {kode:r.kode, label:r.label||'', sekolah:r.sekolah||'', nama, kelas,
         sesiId:'U'+Date.now().toString(36)+Math.random().toString(36).slice(2,7), mulai:Date.now(), hasil:null, sync:''};
-  UJ.jenis = r.jenis || 'mahir'; EX_LIMIT_ = (Number(r.durasi)||20)*60; window.__pemLimit = (Number(r.durasiPemula)||0)*60; window.__pem = (UJ.jenis !== 'mahir');
+  UJ.jenis = r.jenis || 'mahir'; EX_LIMIT_ = (Number(r.durasi)||20)*60; window.__pemLimit = (Number(r.durasiPemula)||0)*60; window.__pemHint = (r.jatahBantuan===undefined)?4:Number(r.jatahBantuan); window.__pem = (UJ.jenis !== 'mahir');
   try{ startAssembly('ujian'); } finally { window.__pem = false; }
   UJ.mulai = asm.t0;
 }
@@ -8341,7 +8388,7 @@ function examTutorial_(first){
     tip.innerHTML = '<h4>'+st.t+'</h4><p>'+st.p.replace('<b>20 menit</b>','<b>'+Math.round(EX_LIMIT_/60)+' menit</b>')+'</p><div class="row"><div class="dots">'+EX_TUT_.map((_,n)=>'<i class="'+(n===i?'on':'')+'"></i>').join('')+'</div>'
       + (last?'':'<button type="button" class="skip" data-a="skip">Lewati</button>')
       + (i>0?'<button type="button" class="btn ghost" data-a="prev">Kembali</button>':'')
-      + '<button type="button" class="btn primary" data-a="next">'+(last?(first?'Mulai Ujian \u25B6':'Tutup'):'Lanjut')+'</button></div>';
+      + '<button type="button" class="btn primary" data-a="next">'+(last?(first?((asm&&asm.pem?'Mulai Latihan':'Mulai Ujian')+' \u25B6'):'Tutup'):'Lanjut')+'</button></div>';
     ov.appendChild(tip);
     let tx = (W-340)/2, ty = (H-tip.offsetHeight)/2;
     if(rects.length){
@@ -8490,8 +8537,12 @@ function ujianSelesai_(){
 /* ---------------- PANEL GURU ---------------- */
 let ujgData_ = {kode:[], hasil:[]};
 function ujgWaktu_(k){ const p = Number(k.DurasiPemula)||0, m = Number(k.DurasiMenit)||20, tp = p ? p+' mnt' : 'tanpa batas';
+  const jb = (k.JatahBantuan===undefined||k.JatahBantuan==='')?4:Number(k.JatahBantuan), bt = ' \u00B7 bantuan '+(jb>=99?'bebas':jb+'x');
+  if(k.Jenis!=='mahir') tp += bt;
   return k.Jenis==='pemula' ? 'Waktu '+tp : (k.Jenis==='keduanya' ? 'Pemula '+tp+', Mahir '+m+' mnt' : 'Waktu '+m+' mnt'); }
-function ujgTahapLabel_(h){ const n = ujgSkenarioName_(h.Skenario); return (h.Skenario==='pemula' && h.TahapSelesai!==undefined && h.TahapSelesai!=='') ? n+' ('+Number(h.TahapSelesai)+'/9 selesai)' : n; }
+function ujgTahapLabel_(h){ const n = ujgSkenarioName_(h.Skenario); let s = (h.Skenario==='pemula' && h.TahapSelesai!==undefined && h.TahapSelesai!=='') ? n+' ('+Number(h.TahapSelesai)+'/9 selesai)' : n;
+  if(h.Skenario==='pemula' && h.TahapBantuan){ const N={mobo:'Motherboard',cpu:'CPU',cooler:'Cooler',ram:'RAM',psu:'PSU',storage:'Storage',gpu:'GPU',cables:'Kabel',os:'OS'}; s += ' \u00B7 dibantu: '+String(h.TahapBantuan).split(',').filter(Boolean).map(k=>N[k]||k).join(', '); }
+  return s; }
 function ujgSkenarioName_(id){ if(id==='pemula') return 'Tahap Pemula'; const s = UJIAN_SCN.find(x=>x.id===id); return s ? s.label.replace('Skenario: ','') : (id||''); }
 function ujgParseTahap_(v){ try{ const o = JSON.parse(v||'{}'); return (o && typeof o==='object') ? o : {}; }catch(e){ return {}; } }
 function ujgFmtTgl_(v){ const d = new Date(v); return isNaN(d) ? '-' : d.toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }
@@ -8512,7 +8563,7 @@ async function ujianGuruLoad_(){
   }
   const lbl_ = {}; (r.kode||[]).forEach(k=>{ lbl_[k.Kode]=k.Label; });
   const pem_ = (r.pemula||[]).map(x=>({Timestamp:x.Timestamp, SesiId:x.SesiId, Kode:x.Kode, Label:lbl_[x.Kode]||'', Nama:x.Nama, Kelas:x.Kelas, Sekolah:x.Sekolah, Skenario:'pemula',
-    Salah:(Number(x.SalahUrutan)||0)+(Number(x.SalahSlot)||0), SalahPerTahap:x.SalahPerTahap, DurasiDetik:x.DurasiDetik, Skor:x.Skor, Predikat:x.Predikat, TahapSelesai:x.TahapSelesai}));
+    Salah:(Number(x.SalahUrutan)||0)+(Number(x.SalahSlot)||0), SalahPerTahap:x.SalahPerTahap, DurasiDetik:x.DurasiDetik, Skor:x.Skor, Predikat:x.Predikat, TahapSelesai:x.TahapSelesai, TahapBantuan:x.TahapBantuan}));
   ujgReal_ = {kode:r.kode||[], hasil:(r.hasil||[]).concat(pem_)};
   ujgData_ = ujgDemo_ ? ujgMerge_() : ujgReal_;
   const sel = document.getElementById('ujg-filter'), prev = sel.value;
@@ -8536,7 +8587,7 @@ async function ujianBuatKode_(){
   const label = document.getElementById('ujg-label').value.trim();
   if(!label){ setMsg_('ujg-msg','Isi nama ujian dulu, misalnya "PTS Rakit PC X TKJ 1".','err'); return; }
   setMsg_('ujg-msg','Membuat kode...','ok');
-  const r = await apiPost_('buatKodeUjian', {sessionToken:s.token, label, jam:Number(document.getElementById('ujg-jam').value)||24, maks:Number(document.getElementById('ujg-maks').value)||1, jenis:document.getElementById('ujg-jenis').value, menit:Number(document.getElementById('ujg-menit').value)||20, menitPemula:Number(document.getElementById('ujg-menitp').value)||0}, 20000);
+  const r = await apiPost_('buatKodeUjian', {sessionToken:s.token, label, jam:Number(document.getElementById('ujg-jam').value)||24, maks:Number(document.getElementById('ujg-maks').value)||1, jenis:document.getElementById('ujg-jenis').value, menit:Number(document.getElementById('ujg-menit').value)||20, menitPemula:Number(document.getElementById('ujg-menitp').value)||0, jatahBantuan:Number(document.getElementById('ujg-bantuan').value)}, 20000);
   if(!r || !r.ok){ setMsg_('ujg-msg', r && r.error==='session-invalid' ? 'Sesi login berakhir, silakan login ulang.' : (r && r.error==='unknown-action' ? 'Server belum diperbarui. Tempel Code.gs versi baru lalu Deploy ulang.' : 'Gagal membuat kode.'), 'err'); return; }
   document.getElementById('ujg-label').value = '';
   setMsg_('ujg-msg','Kode dibuat: '+r.kode+'. Bagikan ke siswa.','ok');
@@ -9506,6 +9557,15 @@ function renderEndingReport(){
     ['cables','Kabel','Sambungkan <b>semua kabel</b> ke konektornya.'],
     ['os','OS','Pasang <b>sistem operasi</b> agar PC bisa dipakai.']];
   const KEY = 'btkj_pemula_pending';
+  const maxHint_ = () => (window.__pemHint===undefined ? 4 : window.__pemHint);   // 99 = tanpa batas
+  const hintInfo_ = (P,c) => { const mx = maxHint_(), done = !!(c && (P.helped||[]).includes(c[0])); return {mx, done, rem: Math.max(0,mx-P.hints), off: !done && P.hints>=mx}; };
+  function hintBtn_(P,c){ if(!c || maxHint_()<=0) return ''; const i = hintInfo_(P,c);
+    return '<button type="button" class="pm-hint" id="pm-hint"'+(i.off?' disabled':'')+'>\u{1F4A1} '+(i.off?'Bantuan habis':'Bantuan'+(i.mx>=99?'':' (sisa '+i.rem+')'))+'</button>'; }
+  function softSlots_(){ const svg=$('case-svg'), P=asm.pem, c=cur_(); if(!svg||!c) return;
+    svg.querySelectorAll('.slot.pm-soft').forEach(e=>e.classList.remove('pm-soft'));
+    let keys=[]; if(c[0]==='cables') keys = cablesOf_().filter(x=>!asm.exCables[x.id]).map(x=>x.hot);
+    else if(c[0]!=='os'){ const a=SLOT_ACCEPT[c[0]]; keys = typeof a==='function' ? a(P.set[c[0]]) : a; }
+    keys.forEach(k=>svg.querySelectorAll('.slot[data-slot="'+k+'"]').forEach(e=>e.classList.add('pm-soft'))); }
   let busy = false;
 
   function buildSet_(){
@@ -9531,8 +9591,9 @@ function renderEndingReport(){
 
   function render_(){
     const P = asm.pem, c = cur_(), area = $('ex-area');
-    area.innerHTML = '<div class="pm-steps">'+STEPS.map((s,i)=>'<span class="pm-st '+(i<P.step?'done':i===P.step?'now':'')+'">'+(i<P.step?'\u2713 ':'')+s[1]+'</span>').join('')+'</div>'
-      + '<div class="pm-now"><span>'+(c ? 'Tahap '+(P.step+1)+'/'+STEPS.length+': '+c[2] : '\u2713 Semua tahap selesai')+'</span>'+(c?'<button type="button" class="pm-hint" id="pm-hint">\u{1F4A1} Bantuan'+(P.hints?' ('+P.hints+')':'')+'</button>':'')+'</div>'
+    const ICON = {mobo:'\u{1F5A5}\uFE0F',cpu:'\u2699\uFE0F',cooler:'\u2744\uFE0F',ram:'\u{1F9EE}',psu:'\u{1F50C}',storage:'\u{1F4BE}',gpu:'\u{1F3AE}',cables:'\u{1F517}',os:'\u{1F4BF}'};
+    area.innerHTML = '<div class="pm-steps" role="list">'+STEPS.map((s,i)=>'<div class="pm-st '+(i<P.step?'done':i===P.step?'now':'')+'" role="listitem"><i>'+(i<P.step?'\u2713':(i+1))+'</i><span>'+s[1]+'</span></div>').join('')+'</div>'
+      + '<div class="pm-now"><div class="pm-ico">'+(c?ICON[c[0]]:'\u2705')+'</div><div class="pm-txt"><small>'+(c?'TAHAP '+(P.step+1)+' DARI '+STEPS.length:'SELESAI')+'</small>'+(c?c[2]:'Semua tahap selesai. Menyimpan hasil...')+'</div>'+hintBtn_(P,c)+'</div>'
       + '<div class="part-grid" id="ex-grid"></div>';
     const grid = $('ex-grid');
     const add = (role, c, card, canDrag) => {
@@ -9557,13 +9618,12 @@ function renderEndingReport(){
       add('cable', cb, card, true);
     });
     if(!asm.exOs){
-      const d = document.createElement('div'); d.className = 'part-card';
-      d.innerHTML = '<div class="pc-name">\u{1F4BF} Windows 11</div><div class="ex-sub">Sistem operasi untuk PC ini. Klik untuk memasang.</div>';
-      d.onclick = ()=>attempt_('os', null, null);
-      grid.appendChild(d);
+      const od = exCard_('Windows 11', '<span class="pc-chip">64-bit</span><span class="pc-chip">Sistem operasi</span>', '', im=>{ im.parentNode.innerHTML = '<svg viewBox="0 0 24 24" width="40" height="40" aria-hidden="true"><path fill="#1f7ae0" d="M3 5.5l8-1.1v7H3zM12 4.3l9-1.3v8.4h-9zM3 12.6h8v7l-8-1.1zM12 12.6h9V21l-9-1.3z"/></svg>'; }, false, ()=>attempt_('os', null, null));
+      grid.appendChild(od);
     }
     const hb = $('pm-hint'); if(hb) hb.onclick = hint_;
     const f = $('ex-filled'); if(f) f.textContent = P.step+'/'+STEPS.length;
+    softSlots_();
   }
   function bad_(kind, title, msg){
     const P = asm.pem, c = cur_();
@@ -9592,20 +9652,24 @@ function renderEndingReport(){
   }
   function hint_(){
     const P = asm.pem, st = cur_(); if(!st) return;
-    P.hints++;
+    P.helped = P.helped || [];
+    if(!P.helped.includes(st[0])){
+      if(P.hints >= maxHint_()){ asmToast('info','Bantuan habis','Jatah bantuanmu sudah terpakai. Kamu pasti bisa!',3000); return; }
+      P.hints++; P.helped.push(st[0]);
+    }
     const role = st[0]==='cables' ? 'cable' : st[0];
     const card = document.querySelector('#ex-grid .part-card[data-role="'+role+'"]') || document.querySelector('#ex-grid .part-card:not([data-role])');
     let keys = [];
     if(role==='cable'){ const cb = cablesOf_().find(x=>!asm.exCables[x.id]); if(cb) keys=[cb.hot]; }
     else if(role!=='os'){ const a = SLOT_ACCEPT[role]; keys = typeof a==='function' ? a(P.set[role]) : a; }
-    const hb = $('pm-hint'); if(hb) hb.textContent = '\u{1F4A1} Bantuan ('+P.hints+')';
+    const hb = $('pm-hint'); if(hb){ const i = hintInfo_(P,st); hb.disabled = false; hb.textContent = '\u{1F4A1} Bantuan'+(i.mx>=99?'':' (sisa '+i.rem+')'); }
     if(card) card.classList.add('rd-hint');
     const svg = $('case-svg'); svg.classList.add('has-sel');
     keys.forEach(k=>svg.querySelectorAll('.slot[data-slot="'+k+'"]').forEach(e=>e.classList.add('target')));
-    asmToast('info','Bantuan','Pilih kartu yang menyala, lalu seret ke slot yang menyala di casing. (Bantuan mengurangi skor.)',3600);
+    asmToast('info','Bantuan','Kartu yang menyala adalah komponen yang tepat untuk tahap ini. Seret ke slot yang menyala. (Bantuan mengurangi 5 poin)',3800);
   }
 
-  function skor_(P){ return {u:Math.max(0,50-P.order*10), s:Math.max(0,30-P.slot*5), b:Math.max(0,20-P.hints*4)}; }
+  function skor_(P){ return {u:Math.max(0,50-P.order*10), s:Math.max(0,30-P.slot*5), b:Math.max(0,20-P.hints*5)}; }
   function finish_(timeout){
     if(!asm || !asm.pem || asm.exDone) return;
     asm.exDone = true; clearInterval(exTimer_);
@@ -9613,7 +9677,7 @@ function renderEndingReport(){
     let skor = sc.u+sc.s+sc.b;
     if(timeout && P.step < STEPS.length) skor = Math.round(skor * P.step / STEPS.length);   // waktu habis: skor dikali porsi tahap yang selesai
     const h = {kode:UJ.kode, sesiId:UJ.sesiId, mulai:UJ.mulai, nama:UJ.nama, kelas:UJ.kelas, skenario:'pemula', skor:skor, predikat:ujianPredikat_(skor),
-      salah:P.order+P.slot, salahUrutan:P.order, salahSlot:P.slot, bantuan:P.hints, tahapSelesai:P.step, salahPerTahap:Object.assign({},P.by),
+      salah:P.order+P.slot, salahUrutan:P.order, salahSlot:P.slot, bantuan:P.hints, tahapSelesai:P.step, tahapBantuan:(P.helped||[]).join(','), salahPerTahap:Object.assign({},P.by),
       detik:Math.round((Date.now()-asm.t0)/1000)};
     window.__pemCur = {sesiId:h.sesiId, sync:'sending'};
     ujianShowResult_(h);
@@ -9657,22 +9721,42 @@ function renderEndingReport(){
   setTimeout(()=>{ try{ flush_(); }catch(e){} }, 8000);
 
   // ---- pengait ke alur ujian yang sudah ada ----
+  const TUT_ORIG = EX_TUT_.slice();
+  function pemTut_(){
+    const lim = window.__pemLimit||0, m = Math.round(lim/60);
+    return [
+      {t:'Selamat datang di Latihan Pemula', p:'Kamu akan merakit PC <b>selangkah demi selangkah</b>. Semua komponen sudah tersedia, jadi tidak ada yang perlu dipilih. '+(lim?'Waktumu <b>'+m+'\u200B menit</b>.':'Waktunya <b>tidak dibatasi</b>.')+' Timer baru mulai setelah tutorial ini.'},
+      {t:'1. Ikuti tahapannya', p:'Garis ini menunjukkan urutan merakit. <b>Kuning</b> = tahap sekarang, <b>hijau \u2713</b> = sudah selesai. Garisnya tidak bisa diklik, cukup diikuti.', sel:['.pm-steps']},
+      {t:'2. Baca petunjuknya', p:'Petunjuk tahap sekarang ada di sini. Kalau memasang <b>sebelum waktunya</b>, komponen ditolak dan dihitung salah urutan.', sel:['.pm-now']},
+      {t:'3. Ambil dari meja kerja', p:'Semua komponen ada di Meja kerja, urutannya diacak. Cari yang sesuai dengan tahap sekarang.', sel:['#ex-grid .part-card']},
+      {t:'4. Seret ke casing', p:'<b>Seret</b> kartu ke slot di casing. Atau <b>klik</b> kartu, lalu klik slotnya. Slot yang salah akan ditolak.', sel:['#ex-grid .part-card[data-role="mobo"]','#slot-mobo'], drag:true},
+      (maxHint_()>0 ? {t:'5. Bingung? Pakai Bantuan', p:'Tombol ini menyalakan kartu dan slot yang benar. Jatahmu <b>'+(maxHint_()>=99?'tidak terbatas':maxHint_()+' kali')+'</b> dan tiap tahap yang dibantu <b>mengurangi 5 poin</b>. Coba dulu sendiri sebelum menekannya.', sel:['#pm-hint']} : null),
+      {t:'6. Cara penilaian', p:'Skor 100: <b>urutan benar 50</b>, <b>slot tepat 30</b>, <b>tanpa bantuan 20</b>. Hasilnya dicatat untuk gurumu. Tombol <b>Cara Main</b> membuka tutorial ini lagi kapan saja.', sel:['#ex-timer']}
+    ].filter(Boolean);
+  }
   const wrap = (name, fn) => { const o = window[name]; if(typeof o==='function') window[name] = function(){ return fn.call(this, o, arguments); }; };
   wrap('examStart_', function(o,a){
-    if(window.__pem){ init_(); }
+    if(window.__pem){ init_(); } else { const sb0 = document.querySelector('.ex-submit'); if(sb0) sb0.innerHTML = '&#10003; Kumpulkan Ujian'; }
     const r = o.apply(this,a);
+    $('screen-assembly').classList.toggle('pem-mode', !!(asm && asm.pem));
     if(asm && asm.pem){
       $('asm-mode-label').textContent = 'LATIHAN PEMULA';
       $('asm-scenario-tag').textContent = 'Pemula';
       $('asm-scenario-text').innerHTML = 'Rakit PC <b>selangkah demi selangkah</b>. Semua komponen sudah tersedia di meja kerja. Ikuti tahapan, lalu seret komponen ke slot di casing.';
       $('rack-title').textContent = 'Meja kerja';
+      const sb = document.querySelector('.ex-submit'); if(sb) sb.innerHTML = '&#10003; Selesai';
       syncTab_(); exRedraw_(); render_();
       const lim = window.__pemLimit||0; $('ex-time').textContent = lim ? Math.floor(lim/60)+':00' : '0:00';
     }
     return r;
   });
   wrap('examRender_', function(o,a){ if(asm && asm.pem){ render_(); return; } return o.apply(this,a); });
-  wrap('examTutorial_', function(o,a){ if(asm && asm.pem){ if(a[0]) examBeginTimer_(); return; } return o.apply(this,a); });
+  wrap('examTutorial_', function(o,a){
+    const pem = !!(asm && asm.pem);
+    EX_TUT_.splice(0, EX_TUT_.length, ...(pem ? pemTut_() : TUT_ORIG));
+    if(pem && !document.querySelector('.pm-steps')){ render_(); }
+    return o.apply(this,a);
+  });
   wrap('exSlotUse_', function(o,a){
     if(!(asm && asm.pem)) return o.apply(this,a);
     if(asm.exDone || !asm.sel) return;
@@ -9697,6 +9781,12 @@ function renderEndingReport(){
     finish_();
   });
 
+})();
+</script>
+<script id="ujx-js">
+(function(){ const k=document.getElementById('uj-kode'), s=document.getElementById('uj-codestat'); if(!k||!s) return;
+  k.addEventListener('input',()=>{ k.value=k.value.toUpperCase().replace(/[^A-Z0-9-]/g,''); const ok=/^[A-Z0-9]{2,}-?[A-Z0-9]{3,}$/.test(k.value);
+    s.className='ujx-codestat'+(ok?' ok':''); s.textContent = ok ? 'Format kode benar' : (k.value ? 'Kode belum lengkap' : 'Masukkan kode dari gurumu, contoh: UJI-AB12C'); });
 })();
 </script>
 </body>

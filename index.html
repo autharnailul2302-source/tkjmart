@@ -2507,6 +2507,55 @@ table.data-table td.hi{color:var(--text);font-weight:700;}
 .pm-hint{flex:none;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:inherit;cursor:pointer;font:600 12px var(--mono);}
 .pm-hint:hover{background:rgba(255,200,87,.2);}
 @media (max-width:700px){.pm-st span{display:none;}}
+/* ===== NYALAKAN PC (animasi hasil Mahir) ===== */
+#bt-ov{position:fixed;inset:0;z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;background:radial-gradient(circle at 50% 35%,#13233a,#060b13 70%);color:#e8eef5;overflow:auto;}
+.bt-stage{position:relative;display:flex;align-items:flex-end;gap:28px;}
+.bt-monitor{width:min(560px,58vw);}
+.bt-screen{position:relative;aspect-ratio:16/10;border-radius:10px;border:10px solid #1b232d;background:#05080c;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.6);font:13px/1.5 ui-monospace,Consolas,monospace;color:#cfe3d6;padding:14px;}
+.bt-stand{width:90px;height:22px;margin:0 auto;background:#1b232d;border-radius:0 0 8px 8px;}
+.bt-pc{position:relative;width:128px;height:230px;border-radius:12px;background:linear-gradient(160deg,#27323f,#161d26);border:2px solid #3a4856;box-shadow:0 12px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:18px;}
+.bt-fan{width:70px;height:70px;border-radius:50%;border:3px solid #4a5968;background:conic-gradient(#2b3642 0 12.5%,#141a21 0 25%,#2b3642 0 37.5%,#141a21 0 50%,#2b3642 0 62.5%,#141a21 0 75%,#2b3642 0 87.5%,#141a21 0);}
+.bt-pc.on .bt-fan{animation:btSpin .5s linear infinite;}
+.bt-pc.slow .bt-fan{animation-duration:1.4s;}
+.bt-led{width:12px;height:12px;border-radius:50%;background:#2b333b;}
+.bt-pc.on .bt-led{background:#3ed6a0;box-shadow:0 0 12px #3ed6a0;}
+.bt-pc.warn .bt-led{background:#ff5a4d;box-shadow:0 0 12px #ff5a4d;}
+.bt-pwr{width:30px;height:30px;border-radius:50%;border:3px solid #8fa0b0;background:#1d2630;display:grid;place-items:center;color:#8fa0b0;font-size:15px;transition:transform .15s;}
+.bt-pwr.pressed{transform:scale(.86);background:#2a3846;}
+@keyframes btSpin{to{transform:rotate(360deg);}}
+.bt-cap{min-height:1.5em;font-size:1.05rem;text-align:center;max-width:90vw;}
+.bt-act{display:flex;gap:10px;}
+.bt-act button{padding:9px 18px;border-radius:99px;border:1px solid #3a4a5c;background:rgba(255,255,255,.07);color:inherit;font-weight:700;cursor:pointer;}
+.bt-act #bt-done{background:linear-gradient(#ffd873,#f2a516);color:#2a1a00;border-color:#ffe29a;}
+.bt-line{white-space:pre-wrap;} .bt-ok{color:#6ff0c2;} .bt-bad{color:#ff7d72;}
+.bt-blink{animation:btBlink 1s steps(2) infinite;} @keyframes btBlink{50%{opacity:0;}}
+.bt-nosig{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#8fa0b0;}
+.bt-nosig.bt-bad{color:#ff7d72;font-size:1.1rem;}
+.bt-win{position:absolute;inset:0;background:linear-gradient(135deg,#0b3d91,#1e78d6 55%,#6bb6ff);display:flex;flex-direction:column;}
+.bt-wlogo{display:grid;place-items:center;flex:1;gap:10px;background:#0a0f16;}
+.bt-wlogo svg{width:64px;height:64px;} .bt-spin{width:26px;height:26px;border-radius:50%;border:3px solid #2a3a4c;border-top-color:#fff;animation:btSpin .8s linear infinite;}
+.bt-desk{position:relative;flex:1;padding:10px;display:flex;justify-content:center;align-items:flex-start;}
+.bt-task{height:26px;background:rgba(10,18,30,.8);display:flex;align-items:center;justify-content:space-between;padding:0 10px;font-size:11px;color:#e8eef5;}
+.bt-rpt{width:min(100%,430px);background:rgba(246,249,252,.97);color:#1c2733;border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.4);font:12px/1.35 system-ui,sans-serif;overflow:hidden;}
+.bt-rpt h4{margin:0;padding:6px 10px;background:#dfe8f1;font-size:12px;}
+.bt-rpt .rw{display:grid;grid-template-columns:92px 1fr 18px;gap:6px;padding:3px 10px;border-bottom:1px solid #e7edf3;align-items:center;}
+.bt-rpt .rw small{display:block;color:#b3402f;font-size:10.5px;}
+.bt-rpt .rw .nm{overflow:hidden;text-overflow:ellipsis;}
+.bt-rpt .y{color:#1e9e6a;font-weight:800;} .bt-rpt .n{color:#d1382b;font-weight:800;}
+.bt-rpt .ft{padding:6px 10px;background:#eef3f8;font-weight:700;}
+.bt-card{max-width:560px;padding:12px 16px;border-radius:12px;background:rgba(255,90,77,.12);border:1px solid rgba(255,125,114,.5);font-size:.95rem;line-height:1.45;}
+.bt-card h3{margin:0 0 6px;color:#ff9a90;font-size:1.05rem;}
+.bt-fx{position:absolute;left:0;bottom:150px;width:128px;pointer-events:none;}
+.bt-puff{position:absolute;left:50%;bottom:0;width:44px;height:44px;margin-left:-22px;border-radius:50%;background:radial-gradient(circle,#9aa3ab,#59626b 60%,transparent 72%);opacity:0;animation:btPuff 2.6s ease-out forwards;}
+@keyframes btPuff{0%{opacity:0;transform:translate(0,0) scale(.5);}20%{opacity:.85;}100%{opacity:0;transform:translate(var(--dx,0),-170px) scale(2.2);}}
+.bt-spark{position:absolute;left:50%;bottom:6px;width:5px;height:5px;border-radius:50%;background:#ffd24a;box-shadow:0 0 8px #ffb300;opacity:0;animation:btSpark .7s ease-out forwards;}
+@keyframes btSpark{0%{opacity:1;transform:translate(0,0);}100%{opacity:0;transform:translate(var(--dx,0),var(--dy,-60px));}}
+.bt-flash{position:absolute;inset:0;background:#fff;opacity:0;animation:btFlash .5s ease-out;pointer-events:none;} @keyframes btFlash{0%{opacity:.9;}100%{opacity:0;}}
+.bt-pc.shake{animation:btShake .4s linear 2;} @keyframes btShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+.bt-temp{position:absolute;top:10px;right:12px;color:#ffb36b;font-weight:800;}
+@media (prefers-reduced-motion:reduce){.bt-pc.on .bt-fan,.bt-puff,.bt-spark,.bt-pc.shake,.bt-flash,.bt-blink{animation:none !important;}.bt-puff{opacity:.5;}}
+@media (max-width:760px){.bt-stage{flex-direction:column;align-items:center;}.bt-monitor{width:92vw;}.bt-pc{width:96px;height:120px;flex-direction:row;padding:0 14px;justify-content:center;}.bt-fan{width:46px;height:46px;}.bt-fx{display:none;}}
+
 #screen-assembly.pem-mode .asm-scn{display:none;}
 #screen-assembly.pem-mode #ex-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
 #screen-assembly.pem-mode #ex-grid .pc-img{height:50px;} #screen-assembly.pem-mode #ex-grid .pc-img img{max-height:46px;}
@@ -3379,7 +3428,7 @@ table.data-table td.hi{color:var(--text);font-weight:700;}
     <span class="ex-pill ex-only" id="ex-timer" title="Sisa waktu ujian">&#9201; <b id="ex-time">20:00</b></span>
     <span class="ex-pill ex-only" id="ex-count">Terisi <b id="ex-filled">0/9</b></span>
     <button type="button" class="btn ghost ex-only ex-help" onclick="examTutorial_(false)">&#10067; Cara Main</button>
-    <button type="button" class="btn primary ex-only ex-submit" onclick="examSubmit_(false)">&#10003; Kumpulkan Ujian</button>
+    <button type="button" class="btn primary ex-only ex-submit" onclick="examSubmit_(false)">&#9211; Nyalakan PC</button>
     <div class="ex-timebar ex-only"><i id="ex-timebar-i"></i></div>
     <div class="asm-game" id="asm-game">
       <span class="g-stars" id="g-stars" role="img" aria-label="3 dari 3 bintang" title="Bintang rakitan. Turun kalau kesalahan bertambah."></span>
@@ -8362,7 +8411,7 @@ const EX_TUT_ = [
   {t:'4. Seret ke casing', p:'<b>Seret</b> kartu komponen ke slot di casing. Atau <b>klik</b> komponen, lalu klik slotnya. Slot yang salah akan ditolak.', sel:['#ex-grid .part-card','#slot-mobo'], drag:true},
   {t:'5. Ganti atau lepas', p:'Mau ganti? Klik komponen yang sudah terpasang (atau klik slotnya) untuk melepasnya, lalu pilih yang lain. Tombol <b>Kosongkan</b> mengulang dari awal.', sel:['#case-svg']},
   {t:'6. Jangan lupa Kabel dan OS', p:'Dua tab terakhir juga dinilai: <b>seret kabel</b> yang dibutuhkan ke konektornya di casing, lalu pilih <b>sistem operasi</b>.', sel:['.ex-tab:nth-of-type(8)','.ex-tab:nth-of-type(9)']},
-  {t:'7. Kumpulkan', p:'Kalau sudah yakin, tekan <b>Kumpulkan Ujian</b>. Setelah dikumpulkan, jawaban tidak bisa diubah. Tombol <b>Cara Main</b> membuka tutorial ini lagi.', sel:['.ex-submit']}
+  {t:'7. Nyalakan PC', p:'Kalau sudah yakin, tekan <b>Nyalakan PC</b> dan lihat hasilnya. Kalau rakitanmu benar, Windows menyala dan kamu melihat rapornya. Setelah dinyalakan, rakitan tidak bisa diubah dan kesempatannya hanya <b>sekali</b>. Tombol <b>Cara Main</b> membuka tutorial ini lagi.', sel:['.ex-submit']}
 ];
 function examTutorial_(first){
   const frame = document.getElementById('game-frame'); if(!frame || document.getElementById('ex-tut')) return;
@@ -9736,7 +9785,7 @@ function renderEndingReport(){
   }
   const wrap = (name, fn) => { const o = window[name]; if(typeof o==='function') window[name] = function(){ return fn.call(this, o, arguments); }; };
   wrap('examStart_', function(o,a){
-    if(window.__pem){ init_(); } else { const sb0 = document.querySelector('.ex-submit'); if(sb0) sb0.innerHTML = '&#10003; Kumpulkan Ujian'; }
+    if(window.__pem){ init_(); } else { const sb0 = document.querySelector('.ex-submit'); if(sb0) sb0.innerHTML = '&#9211; Nyalakan PC'; }
     const r = o.apply(this,a);
     $('screen-assembly').classList.toggle('pem-mode', !!(asm && asm.pem));
     if(asm && asm.pem){
@@ -9856,6 +9905,128 @@ function renderEndingReport(){
 
   const _c = window.coolerSVG_;
   if(typeof _c==='function') window.coolerSVG_ = c => _c(c) + (c.price===0 ? '' : [[100,60],[200,60],[100,160],[200,160]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="2.4" fill="#aab3bc" stroke="#4d5b69" pointer-events="none"/>').join(''));
+})();
+</script>
+<script id="boot-js">
+/* ===== NYALAKAN PC: diagnosa + animasi + rapor (hasil Mahir) ===== */
+(function(){
+  const $ = id => document.getElementById(id);
+  const LBL = {mobo:'Motherboard',cpu:'CPU',cooler:'Cooler',ram:'RAM',psu:'PSU',storage:'Storage',gpu:'GPU',cables:'Kabel',os:'OS'};
+  const got = id => !!(asm.exCables && asm.exCables[id]);
+
+  // Gagal fisik saja (yang membuat PC tidak bisa menyala). Ketidaksesuaian skenario TIDAK menggagalkan boot, hanya muncul di rapor.
+  function diagnose_(){
+    const p = asm.picked||{}, mo = p.mobo, cpu = p.cpu, g = (p.gpu && p.gpu.power>0) ? p.gpu.power : 0;
+    if(!got('wall')) return {t:'dead', sym:'Tidak ada reaksi sama sekali. LED mati dan kipas diam.', why:'Kabel power AC belum tersambung ke stop kontak.'};
+    if(!mo) return {t:'dead', sym:'Tidak ada reaksi. Tidak ada yang bisa dinyalakan.', why:'Motherboard belum dipasang.'};
+    if(!p.psu) return {t:'dead', sym:'Tidak ada reaksi sama sekali.', why:'PSU (catu daya) belum dipasang.'};
+    if(!got('p24') || !got('cpu8')) return {t:'dead', sym:'Tombol ditekan, tapi LED dan kipas tetap mati.', why:'Kabel '+(!got('p24')?'24-pin ATX':'8-pin CPU')+' belum tersambung ke motherboard.'};
+    if(cpu && p.psu.watt < cpu.tdp + g + 120) return {t:'brown', sym:'PC menyala sebentar, mati, menyala lagi, lalu mengeluarkan percikan dan asap.', why:'PSU '+p.psu.watt+' W kurang kuat. Kebutuhan sistem sekitar '+(cpu.tdp+g+120)+' W.'};
+    if(!cpu || cpu.socket!==mo.socket) return {t:'nodisp', sym:'Kipas berputar dan LED menyala, tapi layar tidak menampilkan apa-apa ("No Signal").', why: !cpu ? 'CPU belum dipasang.' : 'Soket CPU ('+cpu.socket+') tidak cocok dengan motherboard ('+mo.socket+').'};
+    if(!p.ram || p.ram.type!==mo.ram) return {t:'beep', sym:'Kipas berputar, layar hitam, dan terdengar bunyi bip berulang.', why: !p.ram ? 'RAM belum dipasang.' : 'RAM '+p.ram.type+' tidak cocok dengan motherboard yang memakai '+mo.ram+'.'};
+    if(!p.cooler || !p.cooler.socket.includes(mo.socket)) return {t:'heat', sym:'PC menyala, tetapi suhu CPU naik cepat lalu PC mati sendiri dan berasap.', why: !p.cooler ? 'Cooler belum dipasang di atas CPU.' : 'Cooler tidak cocok dengan soket '+mo.socket+', jadi tidak menempel dengan benar.'};
+    if(!p.storage || (p.storage.type!=='NVMe' && !got('sata'))) return {t:'nodev', sym:'Muncul layar hitam dengan pesan "No bootable device".', why: !p.storage ? 'Belum ada storage (SSD/HDD) untuk menyimpan sistem operasi.' : 'Kabel power SATA belum tersambung, jadi HDD tidak terdeteksi.'};
+    if(!asm.exOs) return {t:'nodev', sym:'Muncul layar hitam dengan pesan "Operating System not found".', why:'Sistem operasi belum dipasang.'};
+    return {t:'ok'};
+  }
+
+  function why_(k){
+    const p = asm.picked||{}, mo = p.mobo, g = (p.gpu && p.gpu.power>0) ? p.gpu.power : 0;
+    const nm = {mobo:p.mobo, cpu:p.cpu, cooler:p.cooler, ram:p.ram, psu:p.psu, storage:p.storage, gpu:asm.exSel&&asm.exSel.gpu};
+    if(k==='cables') return 'kabel kurang atau salah sambung';
+    if(k==='os') return 'belum dipasang';
+    const c = nm[k]; if(!c) return 'belum dipasang';
+    if(k==='cpu'){ if(mo && c.socket!==mo.socket) return 'soket tidak cocok'; return scnCheck_('cpu',c) || 'tidak sesuai'; }
+    if(k==='cooler') return 'tidak cocok dengan soket';
+    if(k==='ram'){ if(mo && c.type!==mo.ram) return 'tipe tidak cocok'; return scnCheck_('ram',c) || 'tidak sesuai'; }
+    if(k==='psu') return 'daya kurang (butuh sekitar '+((p.cpu?p.cpu.tdp:0)+g+120)+' W)';
+    if(k==='storage' || k==='gpu') return scnCheck_(k,c) || 'tidak sesuai';
+    return 'tidak sesuai';
+  }
+  function raporHtml_(skor, pred){
+    const p = asm.picked||{}, nameOf = {mobo:p.mobo, cpu:p.cpu, cooler:p.cooler, ram:p.ram, psu:p.psu, storage:p.storage, gpu:asm.exSel&&asm.exSel.gpu};
+    const need = cablesNeeded_().length, have = CABLE_DEFS.filter(d=>got(d.id)).length;
+    const rows = Object.keys(LBL).map(k=>{
+      const ok = !(asm.errBy && asm.errBy[k]);
+      const det = k==='cables' ? have+' dari '+need+' kabel' : (k==='os' ? (asm.exOs||'-') : (nameOf[k] ? nameOf[k].name : '-'));
+      return '<div class="rw"><span><b>'+LBL[k]+'</b></span><span class="nm">'+esc_(det)+(ok?'':'<small>'+esc_(why_(k))+'</small>')+'</span><span class="'+(ok?'y':'n')+'">'+(ok?'\u2713':'\u2717')+'</span></div>';
+    }).join('');
+    return '<div class="bt-rpt"><h4>\u{1F4CB} Laporan Rakitan</h4>'+rows+'<div class="ft">Skor '+skor+' \u00B7 '+esc_(pred)+' \u00B7 '+(asm.errCount|0)+' bagian perlu diperbaiki</div></div>';
+  }
+
+  let skipped = false;
+  const sl = ms => skipped ? Promise.resolve() : new Promise(r=>setTimeout(r,ms));
+  function beep_(f,d){ if(typeof musicOn==='undefined' || !musicOn) return; try{ ensureAudio(); if(!audioCtx) return; if(audioCtx.state==='suspended') audioCtx.resume();
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type='square'; o.frequency.value=f; g.gain.value=.05; o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+d); }catch(e){} }
+  const winLogo = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4aa3ff" d="M3 5.5l8-1.1v7H3zM12 4.3l9-1.3v8.4h-9zM3 12.6h8v7l-8-1.1zM12 12.6h9V21l-9-1.3z"/></svg>';
+
+  async function play_(d, skor, pred, auto){
+    const pc = $('bt-pc'), scr = $('bt-screen'), cap = $('bt-cap'), fx = $('bt-fx'), led = pc;
+    const say = t => { cap.textContent = t; };
+    const lines = async (arr, gap) => { for(const l of arr){ scr.insertAdjacentHTML('beforeend','<div class="bt-line">'+l+'</div>'); await sl(gap||260); } };
+    const smoke = n => { for(let i=0;i<n;i++){ const e=document.createElement('i'); e.className='bt-puff'; e.style.setProperty('--dx',((Math.random()*80)-40)+'px'); e.style.animationDelay=(i*0.25)+'s'; fx.appendChild(e); } };
+    const sparks = n => { for(let i=0;i<n;i++){ const e=document.createElement('i'); e.className='bt-spark'; e.style.setProperty('--dx',((Math.random()*120)-60)+'px'); e.style.setProperty('--dy',(-(20+Math.random()*60))+'px'); fx.appendChild(e); } };
+    const final = (html, hasCard) => { if(html) scr.innerHTML = html; $('bt-skip').hidden = true; $('bt-done').hidden = false; $('bt-done').focus(); };
+    say(auto ? 'Waktu habis. PC dinyalakan otomatis...' : 'Menekan tombol power...');
+    await sl(500); $('bt-pwr').classList.add('pressed'); dsfx('tick'); await sl(220); $('bt-pwr').classList.remove('pressed'); await sl(300);
+    const card = () => { const c = document.createElement('div'); c.className='bt-card'; c.innerHTML = '<h3>\u26A0\uFE0F PC gagal menyala</h3><p><b>Gejala:</b> '+esc_(d.sym)+'</p><p><b>Penyebab:</b> '+esc_(d.why)+'</p><p>Skor ujianmu: <b>'+skor+'</b> \u00B7 '+esc_(pred)+'</p>'; $('bt-cap').after(c); };
+    const bios = async () => { scr.innerHTML=''; await lines(['<span class="bt-ok">BIOS v1.0</span>','Memeriksa komponen...'],300); };
+
+    if(d.t==='dead'){
+      say('Tidak ada reaksi...'); await sl(1500); dsfx('wrong'); scr.innerHTML=''; say('PC tetap mati.'); card(); final();
+    } else if(d.t==='nodisp'){
+      pc.classList.add('on'); say('Kipas berputar, LED menyala...'); await sl(1200);
+      scr.innerHTML = '<div class="bt-nosig"><div>\u{1F5A5}\uFE0F<br><b>No Signal</b><br><small>Periksa sambungan</small></div></div>'; beep_(300,.6); await sl(1500); dsfx('wrong'); say('Layar tidak menampilkan apa-apa.'); card(); final();
+    } else if(d.t==='beep'){
+      pc.classList.add('on'); say('Kipas berputar, LED menyala...'); await sl(1000);
+      for(let i=0;i<3;i++){ say('Bip!'); beep_(880,.18); scr.style.background='#111a14'; await sl(280); scr.style.background=''; await sl(220); }
+      dsfx('wrong'); say('Bip berulang, layar hitam.'); card(); final();
+    } else if(d.t==='heat'){
+      pc.classList.add('on'); await bios(); scr.insertAdjacentHTML('beforeend','<div class="bt-temp" id="bt-temp">CPU 40\u00B0C</div>');
+      for(const t of [55,72,89,104]){ say('Suhu CPU naik cepat...'); $('bt-temp').textContent='CPU '+t+'\u00B0C'; await sl(650); }
+      scr.innerHTML = '<div class="bt-nosig bt-bad"><div><b>CPU OVERHEAT</b><br>Sistem dimatikan</div></div>'; pc.classList.remove('on'); pc.classList.add('warn'); dsfx('wrong'); smoke(7); say('PC mati sendiri dan berasap!'); await sl(1500); card(); final();
+    } else if(d.t==='brown'){
+      for(let i=0;i<3;i++){ pc.classList.add('on'); await sl(350); pc.classList.remove('on'); await sl(260); say('Menyala, mati, menyala lagi...'); }
+      pc.classList.add('on','shake'); await sl(500); const fl=document.createElement('div'); fl.className='bt-flash'; $('bt-ov').appendChild(fl); sparks(14); smoke(8); dsfx('wrong'); pc.classList.remove('on'); pc.classList.add('warn'); scr.innerHTML=''; say('Percikan dan asap dari PSU!'); await sl(1800); card(); final();
+    } else if(d.t==='nodev'){
+      pc.classList.add('on'); await bios(); await lines(['CPU ... <span class="bt-ok">OK</span>','RAM ... <span class="bt-ok">OK</span>','Mencari perangkat boot...'],400);
+      scr.insertAdjacentHTML('beforeend','<div class="bt-line bt-bad">'+esc_(d.sym.indexOf('Operating')>=0?'Operating System not found':'No bootable device')+'</div><div class="bt-line bt-blink">_</div>'); dsfx('wrong'); say('PC menyala, tetapi tidak bisa masuk ke sistem operasi.'); await sl(1200); card(); final();
+    } else {
+      const p = asm.picked||{}, gp = asm.exSel && asm.exSel.gpu;
+      pc.classList.add('on'); say('PC menyala!'); await bios();
+      await lines(['CPU : '+esc_(p.cpu.name)+' ... <span class="bt-ok">OK</span>','RAM : '+p.ram.cap+' GB '+p.ram.type+' ... <span class="bt-ok">OK</span>'].concat(gp && gp.power>0 ? ['GPU : '+esc_(gp.name)+' ... <span class="bt-ok">OK</span>'] : []).concat(['Disk: '+esc_(p.storage.name)+' ... <span class="bt-ok">OK</span>','Memuat Windows...']),330);
+      await sl(500); scr.innerHTML = '<div class="bt-win"><div class="bt-wlogo">'+winLogo+'<div class="bt-spin"></div></div></div>'; say('Windows sedang dimuat...'); await sl(1700);
+      const now = new Date(); const hhmm = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+      scr.style.padding='0'; scr.innerHTML = '<div class="bt-win"><div class="bt-desk">'+raporHtml_(skor,pred)+'</div><div class="bt-task"><span>\u229E Mulai</span><span>'+hhmm+'</span></div></div>';
+      dsfx('streak'); say((asm.errCount|0)===0 ? 'Windows menyala. Semua bagian benar!' : 'Windows menyala, tapi ada bagian yang perlu diperbaiki.'); final();
+    }
+  }
+
+  window.bootShow_ = function(auto){
+    const old = $('bt-ov'); if(old) old.remove();
+    const skor = (typeof UJ!=='undefined' && UJ && UJ.hasil) ? UJ.hasil.skor : ujianNilai_(asm.errCount|0), pred = ujianPredikat_(skor);
+    const ov = document.createElement('div'); ov.id = 'bt-ov'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-label','Menyalakan PC');
+    ov.innerHTML = '<div class="bt-stage"><div class="bt-monitor"><div class="bt-screen" id="bt-screen"></div><div class="bt-stand"></div></div>'+
+      '<div class="bt-pc" id="bt-pc"><div class="bt-fan"></div><div class="bt-led"></div><div class="bt-pwr" id="bt-pwr">\u23FB</div><div class="bt-fx" id="bt-fx"></div></div></div>'+
+      '<div class="bt-cap" id="bt-cap" role="status" aria-live="polite"></div>'+
+      '<div class="bt-act"><button type="button" id="bt-skip">Lewati \u25B6\u25B6</button><button type="button" id="bt-done" hidden>Lihat Hasil Lengkap</button></div>';
+    document.body.appendChild(ov); skipped = false;
+    $('bt-skip').onclick = () => { skipped = true; };
+    $('bt-done').onclick = () => { ov.remove(); };
+    play_(diagnose_(), skor, pred, !!auto).catch(()=>{ ov.remove(); });
+  };
+
+  const _s = window.examSubmit_;
+  if(typeof _s==='function') window.examSubmit_ = async function(auto){
+    if(!asm || asm.mode!=='ujian' || asm.pem || asm.exDone) return _s.apply(this, arguments);
+    if(!auto){
+      const yes = await showConfirm('Nyalakan PC sekarang? Setelah dinyalakan, rakitanmu tidak bisa diubah dan ujian selesai.', 'Nyalakan');
+      if(!yes || asm.exDone) return;
+    }
+    asm.exDone = true; clearInterval(exTimer_);
+    exRedraw_(); examGrade_(); finishUjian_();
+    try{ bootShow_(!!auto); }catch(e){}
+  };
 })();
 </script>
 </body>
